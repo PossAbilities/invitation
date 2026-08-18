@@ -5,12 +5,18 @@ previewing the email envelope, and showing an animated RSVP invitation page.
 
 ## Current Prototype
 
-- Branded event builder using the PossAbilities colour palette and strapline.
+- Campaign command centre for starting a new invitation or returning to active
+  events without digging through crowded panels.
+- Guided invitation builder with clear design, recipients, and review steps.
 - Editable event name, date, time, location, host, message, and card accent.
-- Animated recipient preview with an envelope reveal and RSVP buttons.
-- One-by-one recipient entry plus CSV and pasted spreadsheet row import.
-- Registration and superuser monitoring surfaces for the future admin platform.
-- Guest list, email preview, and campaign response summary.
+- Animated recipient preview with a closed envelope that opens into a full card
+  view with RSVP buttons.
+- Dedicated recipient manager with one-by-one entry plus CSV and pasted
+  spreadsheet row import.
+- Separate superuser monitoring area for registration, approvals, email queue,
+  data requests, and platform health.
+- Guest list, campaign response summary, and site-specific social preview
+  metadata.
 - Site-specific social preview image and metadata.
 
 ## Next Product Steps

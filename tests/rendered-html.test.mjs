@@ -36,22 +36,14 @@ test("server-renders the PossAbilities invitation prototype", async () => {
 
   const html = await response.text();
   assert.match(html, /<title>PossAbilities Invitations<\/title>/i);
-  assert.match(html, /Design a hosted invite/);
-  assert.match(html, /Animated invite preview/);
-  assert.match(html, /aria-label="Open invitation envelope"/);
-  assert.match(html, /aria-hidden="true"/);
+  assert.match(html, /Invitation command centre/);
+  assert.match(html, /New invitation/);
+  assert.match(html, /Continue draft/);
+  assert.match(html, /Manage people/);
   assert.match(html, /Live The Life You Choose/);
   assert.match(html, /Summer PossAbilities Social/);
-  assert.match(html, /Add invitation recipients/);
-  assert.match(html, /Paste spreadsheet rows/);
-  assert.match(html, /Upload CSV/);
-  assert.match(html, /Registration and superuser view/);
-  assert.match(html, /Ryan - Superuser/);
-  assert.match(html, /User registration/);
-  assert.match(html, /Platform monitor/);
-  assert.match(html, /Invite list/);
-  assert.match(html, /Inbox preview/);
-  assert.match(html, /Campaign pulse/);
+  assert.match(html, /Big Tea Meet Up/);
+  assert.match(html, /Volunteer welcome morning/);
   assert.match(html, /og:image/);
   assert.match(html, /https:\/\/possabilities-invitations\.example\/og\.png/);
   assert.doesNotMatch(html, /codex-preview|Building your site|SkeletonPreview/);
@@ -66,6 +58,12 @@ test("removes starter skeleton assets and dependency", async () => {
 
   assert.match(page, /possabilities-wordmark\.png/);
   assert.match(page, /invite-stage/);
+  assert.match(page, /Build the invitation list/);
+  assert.match(page, /Spreadsheet rows/);
+  assert.match(page, /CSV file/);
+  assert.match(page, /Ryan - Superuser/);
+  assert.match(page, /Platform monitor/);
+  assert.match(page, /User registration/);
   assert.match(layout, /generateMetadata/);
   assert.match(layout, /og\.png/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
