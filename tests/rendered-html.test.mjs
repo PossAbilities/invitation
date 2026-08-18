@@ -38,6 +38,8 @@ test("server-renders the PossAbilities invitation prototype", async () => {
   assert.match(html, /<title>PossAbilities Invitations<\/title>/i);
   assert.match(html, /Design a hosted invite/);
   assert.match(html, /Animated invite preview/);
+  assert.match(html, /aria-label="Open invitation envelope"/);
+  assert.match(html, /aria-hidden="true"/);
   assert.match(html, /Live The Life You Choose/);
   assert.match(html, /Summer PossAbilities Social/);
   assert.match(html, /Invite list/);

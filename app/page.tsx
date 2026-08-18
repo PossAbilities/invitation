@@ -167,7 +167,11 @@ export default function Home() {
 
             <div className={isOpen ? "invite-stage open" : "invite-stage"}>
               <div className="mail-shadow" />
-              <div className="invite-card" aria-label="Invitation card preview">
+              <div
+                className="invite-card"
+                aria-hidden={!isOpen}
+                aria-label="Invitation card preview"
+              >
                 <img src="/brand/possabilities-stacked.png" alt="" />
                 <span className="invite-tag">Live The Life You Choose</span>
                 <h3>{eventName}</h3>
@@ -187,20 +191,30 @@ export default function Home() {
                   </div>
                 </dl>
                 <div className="rsvp-row" aria-label="RSVP actions">
-                  <button type="button">Going</button>
-                  <button type="button">Maybe</button>
+                  <button disabled={!isOpen} type="button">
+                    Going
+                  </button>
+                  <button disabled={!isOpen} type="button">
+                    Maybe
+                  </button>
                 </div>
               </div>
-              <div className="envelope">
-                <div className="envelope-back" />
-                <div className="envelope-paper">
+              <button
+                className="envelope"
+                type="button"
+                onClick={() => setIsOpen((value) => !value)}
+                aria-label={isOpen ? "Close invitation envelope" : "Open invitation envelope"}
+                title={isOpen ? "Close envelope" : "Open envelope"}
+              >
+                <span className="envelope-back" />
+                <span className="envelope-paper">
                   <span>You are invited</span>
                   <strong>{host}</strong>
-                </div>
-                <div className="envelope-front" />
-                <div className="envelope-flap" />
-                <div className="wax-seal">P</div>
-              </div>
+                </span>
+                <span className="envelope-front" />
+                <span className="envelope-flap" />
+                <span className="wax-seal">P</span>
+              </button>
             </div>
           </div>
         </section>
