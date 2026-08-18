@@ -29,8 +29,7 @@ body {
   margin: 0;
   color: var(--foreground);
   background:
-    radial-gradient(circle at 13% 9%, rgba(102, 204, 204, 0.32), transparent 280px),
-    linear-gradient(180deg, #edf6f8 0, #f9fbfb 340px, #f4f8f8 100%);
+    linear-gradient(180deg, #f7fbfb 0, #edf8f8 42%, #f8faf9 100%);
   font-family: Avenir, "Avenir Next", "Segoe UI", Arial, sans-serif;
 }
 
@@ -74,12 +73,11 @@ button {
   content: "";
   position: fixed;
   inset: 0 0 auto 0;
-  height: 220px;
-  background-image: url("/brand/possabilities-wave.png");
-  background-position: top center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  opacity: 0.08;
+  height: 430px;
+  background:
+    linear-gradient(168deg, transparent 0 14%, rgba(102, 204, 204, 0.22) 14.2% 28%, transparent 28.2%),
+    linear-gradient(174deg, transparent 0 31%, rgba(236, 0, 140, 0.07) 31.2% 34.5%, transparent 34.7%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0));
   pointer-events: none;
 }
 
@@ -89,10 +87,10 @@ button {
   inset: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(rgba(72, 6, 90, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(72, 6, 90, 0.025) 1px, transparent 1px);
-  background-size: 34px 34px;
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.78), transparent 60%);
+    linear-gradient(rgba(72, 6, 90, 0.016) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(72, 6, 90, 0.016) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.52), transparent 55%);
 }
 
 .app-topbar,
