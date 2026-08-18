@@ -124,6 +124,7 @@ button {
 }
 
 .hero-grid,
+.people-grid,
 .dashboard-grid {
   display: grid;
   gap: 18px;
@@ -139,6 +140,11 @@ button {
   margin-top: 18px;
 }
 
+.people-grid {
+  grid-template-columns: minmax(520px, 1.15fr) minmax(420px, 0.85fr);
+  margin-top: 18px;
+}
+
 .panel {
   background: var(--panel);
   border: 1px solid rgba(72, 6, 90, 0.1);
@@ -149,6 +155,8 @@ button {
 
 .builder,
 .preview-panel,
+.people-panel,
+.access-panel,
 .guest-panel,
 .email-panel,
 .stats-panel {
@@ -313,12 +321,192 @@ textarea:focus {
   padding: 0 16px;
 }
 
+.ghost-action {
+  min-height: 44px;
+  padding: 0 14px;
+  color: var(--ink-muted);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-weight: 900;
+  transition: transform 180ms ease, border-color 180ms ease;
+}
+
 .primary-action:hover,
 .secondary-action:hover,
 .icon-command:hover,
+.ghost-action:hover,
 .rsvp-row button:hover,
 .email-content button:hover {
   transform: translateY(-1px);
+}
+
+.people-tools,
+.access-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.people-tools {
+  grid-template-columns: minmax(260px, 0.8fr) minmax(320px, 1.2fr);
+  align-items: start;
+}
+
+.single-add,
+.bulk-add,
+.registration-flow,
+.superuser-monitor {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.single-add {
+  padding-right: 20px;
+  border-right: 1px solid rgba(72, 6, 90, 0.1);
+}
+
+.bulk-field textarea {
+  min-height: 168px;
+  white-space: pre;
+  overflow: auto;
+}
+
+.bulk-actions {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.file-import {
+  flex: 1 1 190px;
+}
+
+.file-import input {
+  min-height: 44px;
+  padding: 9px;
+}
+
+.count-pill,
+.superuser-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.count-pill {
+  color: #164c4f;
+  background: rgba(102, 204, 204, 0.22);
+  padding: 0 13px;
+}
+
+.superuser-badge {
+  color: #ffffff;
+  background: var(--purple);
+  padding: 0 14px;
+}
+
+.import-notice {
+  color: var(--purple);
+  font-size: 0.9rem;
+  font-weight: 800;
+  min-height: 1.3em;
+}
+
+.access-grid {
+  grid-template-columns: minmax(230px, 0.86fr) minmax(280px, 1.14fr);
+}
+
+.registration-flow h3,
+.superuser-monitor h3 {
+  color: var(--purple);
+  font-size: 1rem;
+  line-height: 1.1;
+}
+
+.registration-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle-row input {
+  width: 20px;
+  min-height: 20px;
+  accent-color: var(--purple);
+}
+
+.toggle-row span {
+  color: var(--purple);
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.admin-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.admin-metrics div {
+  display: grid;
+  gap: 4px;
+  align-content: center;
+  min-height: 78px;
+  padding: 10px;
+  border-radius: var(--radius);
+  background: rgba(102, 204, 204, 0.16);
+  text-align: center;
+}
+
+.admin-metrics strong {
+  color: var(--purple);
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.admin-metrics span {
+  color: var(--ink-muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.monitor-feed {
+  display: grid;
+  border-top: 1px solid rgba(72, 6, 90, 0.1);
+}
+
+.monitor-feed article {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(72, 6, 90, 0.1);
+}
+
+.monitor-feed span {
+  color: var(--ink-muted);
+}
+
+.monitor-feed strong {
+  color: var(--purple);
+  text-align: right;
 }
 
 .preview-heading {
@@ -813,6 +1001,7 @@ textarea:focus {
 
 @media (max-width: 1120px) {
   .hero-grid,
+  .people-grid,
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
@@ -824,6 +1013,18 @@ textarea:focus {
   .invite-stage {
     height: 620px;
     min-height: 620px;
+  }
+
+  .people-tools,
+  .access-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .single-add {
+    padding-right: 0;
+    padding-bottom: 20px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(72, 6, 90, 0.1);
   }
 }
 
@@ -858,16 +1059,29 @@ textarea:focus {
   }
 
   .actions,
-  .rsvp-row {
+  .rsvp-row,
+  .bulk-actions {
     flex-direction: column;
   }
 
   .primary-action,
   .secondary-action,
   .icon-command,
+  .ghost-action,
   .rsvp-row button,
   .email-content button {
     width: 100%;
+  }
+
+  .count-pill,
+  .superuser-badge {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .registration-fields,
+  .admin-metrics {
+    grid-template-columns: 1fr;
   }
 
   .invite-stage {

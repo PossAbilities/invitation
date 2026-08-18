@@ -8,6 +8,8 @@ previewing the email envelope, and showing an animated RSVP invitation page.
 - Branded event builder using the PossAbilities colour palette and strapline.
 - Editable event name, date, time, location, host, message, and card accent.
 - Animated recipient preview with an envelope reveal and RSVP buttons.
+- One-by-one recipient entry plus CSV and pasted spreadsheet row import.
+- Registration and superuser monitoring surfaces for the future admin platform.
 - Guest list, email preview, and campaign response summary.
 - Site-specific social preview image and metadata.
 

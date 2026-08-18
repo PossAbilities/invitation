@@ -42,6 +42,13 @@ test("server-renders the PossAbilities invitation prototype", async () => {
   assert.match(html, /aria-hidden="true"/);
   assert.match(html, /Live The Life You Choose/);
   assert.match(html, /Summer PossAbilities Social/);
+  assert.match(html, /Add invitation recipients/);
+  assert.match(html, /Paste spreadsheet rows/);
+  assert.match(html, /Upload CSV/);
+  assert.match(html, /Registration and superuser view/);
+  assert.match(html, /Ryan - Superuser/);
+  assert.match(html, /User registration/);
+  assert.match(html, /Platform monitor/);
   assert.match(html, /Invite list/);
   assert.match(html, /Inbox preview/);
   assert.match(html, /Campaign pulse/);
