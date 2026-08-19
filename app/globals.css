@@ -883,59 +883,60 @@ textarea:focus {
 }
 
 .invite-stage {
-  height: clamp(520px, calc(100dvh - 220px), 590px);
-  min-height: 520px;
+  height: clamp(650px, calc(100dvh - 170px), 720px);
+  min-height: 650px;
   position: relative;
   display: grid;
   place-items: center;
   overflow: hidden;
   border-radius: 16px;
   background:
-    linear-gradient(135deg, rgba(102, 204, 204, 0.28), rgba(255, 255, 255, 0.42) 42%, rgba(236, 0, 140, 0.09)),
-    #f9ffff;
-  border: 1px solid rgba(72, 6, 90, 0.08);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 22%),
+    linear-gradient(140deg, #2b1748 0%, #1c0d31 58%, #130821 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 24px 70px rgba(35, 12, 48, 0.2);
 }
 
 .invite-stage::before {
   content: "";
   position: absolute;
-  width: 130%;
-  height: 168px;
-  bottom: -92px;
-  left: -15%;
-  background: var(--teal);
-  transform: rotate(-4deg);
-  opacity: 0.34;
+  inset: 0;
+  opacity: 0.18;
+  background-image:
+    radial-gradient(circle at 18% 17%, #f7c85f 0 3px, transparent 4px),
+    radial-gradient(circle at 78% 14%, #ff6f8f 0 3px, transparent 4px),
+    radial-gradient(circle at 12% 77%, #66cccc 0 3px, transparent 4px),
+    radial-gradient(circle at 88% 72%, #ec008c 0 3px, transparent 4px);
 }
 
 .invite-stage::after {
   content: "";
   position: absolute;
-  width: 110%;
-  height: 132px;
-  top: -80px;
-  right: -18%;
-  background: var(--purple);
-  transform: rotate(5deg);
-  opacity: 0.1;
+  inset: 0;
+  opacity: 0.09;
+  background-image:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.16) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(circle at center, #000 0 48%, transparent 82%);
 }
 
 .mail-shadow {
-  width: min(390px, 74vw);
+  width: min(410px, 74vw);
   height: 42px;
   border-radius: 50%;
-  background: rgba(72, 6, 90, 0.16);
-  filter: blur(10px);
+  background: rgba(3, 0, 8, 0.36);
+  filter: blur(12px);
   position: absolute;
-  bottom: 82px;
+  bottom: 78px;
   transition: transform 760ms ease, opacity 760ms ease;
 }
 
 .envelope {
-  width: min(380px, 78vw);
+  width: min(390px, 80vw);
   aspect-ratio: 1.48;
   position: absolute;
-  bottom: 122px;
+  bottom: 118px;
   z-index: 4;
   display: block;
   padding: 0;
@@ -958,9 +959,87 @@ textarea:focus {
 }
 
 .envelope-back {
-  background: linear-gradient(140deg, #ffffff, #e8fbfb);
-  border: 1px solid rgba(72, 6, 90, 0.1);
-  box-shadow: 0 26px 70px rgba(72, 6, 90, 0.24);
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent 38%),
+    repeating-linear-gradient(12deg, rgba(255, 255, 255, 0.035) 0 2px, transparent 2px 7px),
+    linear-gradient(160deg, #c59a4d, #a87832 62%, #8d6028);
+  border: 1px solid rgba(50, 28, 11, 0.28);
+  box-shadow: 0 28px 76px rgba(0, 0, 0, 0.34);
+}
+
+.envelope-postmark {
+  position: absolute;
+  right: 94px;
+  top: 36px;
+  width: 82px;
+  height: 28px;
+  border-top: 2px solid rgba(72, 6, 90, 0.24);
+  border-bottom: 2px solid rgba(72, 6, 90, 0.16);
+  transform: rotate(-3deg);
+}
+
+.envelope-postmark::before {
+  content: "";
+  position: absolute;
+  right: -18px;
+  top: -15px;
+  width: 44px;
+  height: 44px;
+  border: 2px solid rgba(72, 6, 90, 0.16);
+  border-radius: 50%;
+}
+
+.envelope-stamp {
+  position: absolute;
+  right: 42px;
+  top: 28px;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 42px;
+  color: #ffffff;
+  background: linear-gradient(145deg, var(--accent), #f479a8);
+  clip-path: polygon(
+    0 8%,
+    8% 8%,
+    8% 0,
+    20% 0,
+    20% 8%,
+    32% 8%,
+    32% 0,
+    44% 0,
+    44% 8%,
+    56% 8%,
+    56% 0,
+    68% 0,
+    68% 8%,
+    80% 8%,
+    80% 0,
+    92% 0,
+    92% 8%,
+    100% 8%,
+    100% 92%,
+    92% 92%,
+    92% 100%,
+    80% 100%,
+    80% 92%,
+    68% 92%,
+    68% 100%,
+    56% 100%,
+    56% 92%,
+    44% 92%,
+    44% 100%,
+    32% 100%,
+    32% 92%,
+    20% 92%,
+    20% 100%,
+    8% 100%,
+    8% 92%,
+    0 92%
+  );
+  font-size: 1.4rem;
+  font-weight: 900;
 }
 
 .envelope-paper {
@@ -974,9 +1053,9 @@ textarea:focus {
   align-content: center;
   gap: 8px;
   color: var(--purple);
-  background: #ffffff;
-  border: 1px solid rgba(72, 6, 90, 0.1);
-  box-shadow: 0 16px 40px rgba(72, 6, 90, 0.16);
+  background: #fff8e9;
+  border: 1px solid rgba(72, 6, 90, 0.12);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
   opacity: 0;
   transform: translateY(58px) scale(0.88);
   transition: transform 780ms cubic-bezier(0.22, 1, 0.36, 1), opacity 420ms ease;
@@ -998,18 +1077,29 @@ textarea:focus {
 .envelope-front {
   z-index: 5;
   background:
-    linear-gradient(32deg, transparent 49.6%, rgba(72, 6, 90, 0.14) 50%, transparent 50.8%),
-    linear-gradient(148deg, transparent 49.6%, rgba(72, 6, 90, 0.12) 50%, transparent 50.8%),
-    linear-gradient(0deg, #fefefe, #e8fbfb);
+    linear-gradient(32deg, transparent 49.6%, rgba(72, 6, 90, 0.22) 50%, transparent 50.8%),
+    linear-gradient(148deg, transparent 49.6%, rgba(72, 6, 90, 0.2) 50%, transparent 50.8%),
+    linear-gradient(0deg, #c79a4d, #ae7a31);
   clip-path: polygon(0 37%, 50% 72%, 100% 37%, 100% 100%, 0 100%);
-  border: 1px solid rgba(72, 6, 90, 0.12);
+  border: 1px solid rgba(50, 28, 11, 0.28);
+}
+
+.envelope-recipient {
+  position: absolute;
+  left: 50%;
+  top: 55%;
+  transform: translate(-50%, -50%);
+  color: #23130e;
+  font-size: clamp(1rem, 2.3vw, 1.22rem);
+  font-weight: 800;
+  white-space: nowrap;
 }
 
 .envelope-flap {
   z-index: 6;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(224, 247, 247, 0.98)),
-    #ffffff;
+    linear-gradient(180deg, rgba(230, 187, 104, 0.98), rgba(174, 122, 49, 0.98)),
+    #bd8b3f;
   clip-path: polygon(0 0, 100% 0, 50% 62%);
   transform-origin: top center;
   backface-visibility: hidden;
@@ -1028,35 +1118,48 @@ textarea:focus {
   place-items: center;
   color: #ffffff;
   background: var(--accent);
-  border: 4px solid #ffffff;
-  box-shadow: 0 10px 24px rgba(72, 6, 90, 0.24);
+  border: 4px solid #2d174b;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.34);
   font-size: 1.65rem;
   font-weight: 900;
   transition: transform 540ms ease, opacity 420ms ease;
 }
 
 .invite-card {
-  width: min(336px, calc(100% - 34px));
-  max-height: calc(100% - 34px);
+  width: min(430px, calc(100% - 24px));
+  max-height: calc(100% - 28px);
   position: absolute;
   z-index: 3;
-  top: 17px;
-  color: var(--purple);
+  top: 14px;
+  color: #ffffff;
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--accent) 10%, #ffffff), #ffffff 35%),
-    #ffffff;
-  border: 1px solid rgba(72, 6, 90, 0.1);
-  border-top: 10px solid var(--accent);
-  border-radius: var(--radius);
-  box-shadow: 0 28px 80px rgba(35, 31, 32, 0.2);
-  padding: clamp(16px, 1.8vw, 21px);
-  display: grid;
-  gap: 11px;
+    linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.025)),
+    #2b1748;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 18px;
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.34);
+  padding: 13px;
   overflow: auto;
+  scrollbar-width: thin;
   pointer-events: none;
-  transform: translateY(172px) scale(0.76);
+  transform: translateY(172px) scale(0.72);
   opacity: 0;
   transition: transform 920ms cubic-bezier(0.22, 1, 0.36, 1), opacity 520ms ease;
+}
+
+.invite-card-shell {
+  min-height: 100%;
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  padding: clamp(16px, 2vw, 22px);
+}
+
+.invite-card-header {
+  display: grid;
+  justify-items: center;
+  gap: 9px;
+  text-align: center;
 }
 
 .invite-logo {
@@ -1091,112 +1194,207 @@ textarea:focus {
 }
 
 .invite-tag {
-  color: var(--teal-deep);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
+  color: #75dddd;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
   font-weight: 900;
   text-align: center;
+  text-transform: uppercase;
 }
 
 .invite-card h3 {
-  font-size: clamp(1.22rem, 2vw, 1.55rem);
+  color: #ff789a;
+  font-size: clamp(1.45rem, 3vw, 2.08rem);
+  line-height: 0.98;
   text-align: center;
+  text-shadow: 0 3px 0 rgba(72, 6, 90, 0.22);
 }
 
-.invite-card p {
-  color: #343033;
+.invite-card-header p {
+  max-width: 30rem;
+  color: rgba(255, 255, 255, 0.9);
   font-size: 0.9rem;
-  line-height: 1.42;
+  line-height: 1.5;
   text-align: center;
 }
 
-.invite-card dl {
+.journey-line {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  padding-top: 22px;
+}
+
+.journey-line::before {
+  content: "";
+  position: absolute;
+  left: 9%;
+  right: 9%;
+  top: 12px;
+  height: 12px;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.82) 1.5px, transparent 2px);
+  background-size: 16px 10px;
+  background-repeat: repeat-x;
+}
+
+.journey-step {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  min-width: 0;
+  text-align: center;
+}
+
+.journey-step span {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #ffffff;
+  background: color-mix(in srgb, var(--accent) 78%, #57236a);
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+  font-size: 0.82rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.journey-step:nth-child(2) span,
+.journey-step:nth-child(4) span {
+  background: #2a9499;
+}
+
+.journey-step strong {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.invite-detail-panel {
+  display: grid;
+  gap: 14px;
+  color: #271633;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 250, 238, 0.96)),
+    #fff7e8;
+  border-radius: 16px;
+  padding: clamp(16px, 2vw, 22px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.86), 0 16px 38px rgba(0, 0, 0, 0.18);
+}
+
+.invite-detail-panel dl {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+
+.event-detail {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px dashed rgba(72, 6, 90, 0.18);
+}
+
+.event-detail:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.event-detail dt {
+  color: var(--pink);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.event-detail dd {
   display: grid;
   gap: 4px;
   margin: 0;
-}
-
-.invite-card dl div {
-  display: grid;
-  grid-template-columns: 62px 1fr;
-  gap: 10px;
-  align-items: baseline;
-  padding: 8px 0;
-  border-top: 1px solid rgba(72, 6, 90, 0.1);
-}
-
-.invite-card dd {
-  margin: 0;
   color: var(--purple);
-  font-weight: 800;
 }
 
-.map-link {
-  color: inherit;
-  text-decoration-color: rgba(236, 0, 140, 0.38);
-  text-decoration-thickness: 2px;
+.event-detail dd strong {
+  overflow-wrap: anywhere;
+  font-size: 0.92rem;
+  line-height: 1.3;
+}
+
+.event-detail dd span {
+  color: #5e5462;
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.detail-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.detail-links a {
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  color: var(--purple);
+  font-size: 0.78rem;
+  font-weight: 850;
+  text-decoration-color: rgba(236, 0, 140, 0.48);
+  text-decoration-thickness: 1.5px;
   text-underline-offset: 3px;
 }
 
-.map-link:hover {
+.detail-links a:hover {
   color: var(--pink);
-}
-
-.guest-tools {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.guest-tool {
-  min-height: 36px;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(72, 6, 90, 0.12);
-  border-radius: 999px;
-  color: var(--purple);
-  background: rgba(102, 204, 204, 0.18);
-  padding: 0 12px;
-  font-size: 0.82rem;
-  font-weight: 900;
-  text-align: center;
-  text-decoration: none;
-  transition: transform 180ms ease, background 180ms ease, color 180ms ease;
-}
-
-.guest-tool.primary {
-  color: #ffffff;
-  background: var(--purple);
-}
-
-.guest-tool:hover {
-  transform: translateY(-1px);
+  text-decoration-color: currentColor;
 }
 
 .rsvp-row {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding-top: 2px;
 }
 
 .rsvp-row button {
-  min-height: 36px;
+  min-height: 46px;
   border: 0;
   border-radius: 999px;
   color: #ffffff;
-  background: var(--purple);
-  padding: 0 16px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 74%, #ff8c7a), var(--accent));
+  padding: 0 34px;
   font-weight: 900;
+  box-shadow: 0 7px 0 #b10066, 0 16px 30px rgba(236, 0, 140, 0.24);
+  transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 180ms ease;
 }
 
-.rsvp-row button:nth-child(2) {
-  color: var(--purple);
-  background: rgba(102, 204, 204, 0.22);
+.rsvp-row button:hover {
+  transform: translateY(-1px);
+}
+
+.rsvp-row button:active {
+  transform: translateY(3px);
+  box-shadow: 0 4px 0 #b10066, 0 10px 20px rgba(236, 0, 140, 0.18);
+}
+
+.rsvp-row p {
+  color: #6c6170;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  text-align: center;
 }
 
 .invite-stage.open .envelope {
-  transform: translateY(160px) scale(0.68);
+  transform: translateY(190px) scale(0.62);
 }
 
 .invite-stage.open .envelope-flap {
@@ -1469,7 +1667,7 @@ textarea:focus {
   }
 
   .invite-stage {
-    height: 590px;
+    height: 690px;
   }
 }
 
@@ -1612,36 +1810,39 @@ textarea:focus {
 
   .focus-actions,
   .form-actions,
-  .bulk-actions,
-  .rsvp-row {
+  .bulk-actions {
     flex-direction: column;
     align-items: stretch;
-  }
-
-  .guest-tools {
-    grid-template-columns: 1fr;
   }
 
   .primary-action,
   .secondary-action,
   .text-action,
-  .guest-tool,
   .rsvp-row button {
     width: 100%;
   }
 
   .invite-stage {
-    height: 580px;
-    min-height: 580px;
+    height: 700px;
+    min-height: 700px;
   }
 
   .envelope {
-    bottom: 118px;
+    bottom: 124px;
   }
 
   .invite-card {
-    width: min(342px, calc(100% - 24px));
+    width: min(390px, calc(100% - 18px));
     max-height: calc(100% - 34px);
+  }
+
+  .journey-line {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 8px;
+  }
+
+  .journey-line::before {
+    display: none;
   }
 
   .guest-row {
@@ -1692,12 +1893,26 @@ textarea:focus {
   }
 
   .invite-stage {
-    height: 560px;
-    min-height: 560px;
+    height: 720px;
+    min-height: 720px;
   }
 
   .envelope {
     width: min(320px, 84vw);
+  }
+
+  .invite-card-shell {
+    gap: 13px;
+    padding: 14px;
+  }
+
+  .invite-detail-panel {
+    padding: 14px;
+  }
+
+  .event-detail {
+    grid-template-columns: 1fr;
+    gap: 6px;
   }
 }
 

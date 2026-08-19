@@ -62,9 +62,11 @@ test("removes starter skeleton assets and dependency", async () => {
   assert.match(page, /command-grid/);
   assert.match(page, /Start new invitation/);
   assert.match(page, /Add to calendar/);
-  assert.match(page, /Open maps/);
+  assert.match(page, /View map/);
   assert.match(page, /text\/calendar/);
   assert.match(page, /google\.com\/maps\/search/);
+  assert.match(page, /journey-line/);
+  assert.match(page, /detail-links/);
   assert.match(page, /Card branding/);
   assert.match(page, /Logo style/);
   assert.match(page, /Logo size/);

@@ -1222,6 +1222,7 @@ function InvitePreview({
   const calendarDownloadName = `${slugify(eventName)}.ics`;
   const displayHeader = cardHeader.trim();
   const displayTitle = cardTitle.trim() || eventName;
+  const journeySteps = ["Invite sent", "Card opened", "RSVP", "Celebrate"];
   const logoSrc =
     logoVariant === "wordmark"
       ? "/brand/possabilities-wordmark.png"
@@ -1231,66 +1232,79 @@ function InvitePreview({
     <div className={isOpen ? "invite-stage open" : "invite-stage"}>
       <div className="mail-shadow" />
       <div className="invite-card" aria-hidden={!isOpen} aria-label="Invitation card preview">
-        {logoVariant !== "none" && (
-          <img
-            className={`invite-logo ${logoVariant} ${logoSize}`}
-            src={logoSrc}
-            alt="PossAbilities"
-          />
-        )}
-        {displayHeader && <span className="invite-tag">{displayHeader}</span>}
-        <h3>{displayTitle}</h3>
-        <p>{message}</p>
-        <dl>
-          <div>
-            <dt>Date</dt>
-            <dd>{eventDate}</dd>
+        <div className="invite-card-shell">
+          <div className="invite-card-header">
+            {logoVariant !== "none" && (
+              <img
+                className={`invite-logo ${logoVariant} ${logoSize}`}
+                src={logoSrc}
+                alt="PossAbilities"
+              />
+            )}
+            {displayHeader && <span className="invite-tag">{displayHeader}</span>}
+            <h3>{displayTitle}</h3>
+            <p>{message}</p>
           </div>
-          <div>
-            <dt>Time</dt>
-            <dd>{eventTime}</dd>
+
+          <div className="journey-line" aria-label="Invitation journey">
+            {journeySteps.map((step, index) => (
+              <div className="journey-step" key={step}>
+                <span aria-hidden="true">{index + 1}</span>
+                <strong>{step}</strong>
+              </div>
+            ))}
           </div>
-          <div>
-            <dt>Place</dt>
-            <dd>
-              <a
-                className="map-link"
-                href={mapsHref}
-                rel="noreferrer"
-                tabIndex={isOpen ? undefined : -1}
-                target="_blank"
-              >
-                {location}
-              </a>
-            </dd>
+
+          <div className="invite-detail-panel">
+            <dl>
+              <div className="event-detail">
+                <dt>Date</dt>
+                <dd>
+                  <strong>{eventDate}</strong>
+                  <span>{eventTime}</span>
+                  <span className="detail-links">
+                    <a
+                      download={calendarDownloadName}
+                      href={calendarHref}
+                      tabIndex={isOpen ? undefined : -1}
+                    >
+                      Add to calendar
+                    </a>
+                  </span>
+                </dd>
+              </div>
+              <div className="event-detail">
+                <dt>Place</dt>
+                <dd>
+                  <strong>{location}</strong>
+                  <span>Hosted by {host}</span>
+                  <span className="detail-links">
+                    <a
+                      href={mapsHref}
+                      rel="noreferrer"
+                      tabIndex={isOpen ? undefined : -1}
+                      target="_blank"
+                    >
+                      View map
+                    </a>
+                  </span>
+                </dd>
+              </div>
+              <div className="event-detail">
+                <dt>Expect</dt>
+                <dd>
+                  <span>A relaxed PossAbilities gathering with food, music, and time together.</span>
+                </dd>
+              </div>
+            </dl>
+
+            <div className="rsvp-row" aria-label="RSVP actions">
+              <button disabled={!isOpen} type="button">
+                RSVP
+              </button>
+              <p>We would love to know if you can make it.</p>
+            </div>
           </div>
-        </dl>
-        <div className="guest-tools" aria-label="Guest event tools">
-          <a
-            className="guest-tool primary"
-            download={calendarDownloadName}
-            href={calendarHref}
-            tabIndex={isOpen ? undefined : -1}
-          >
-            Add to calendar
-          </a>
-          <a
-            className="guest-tool"
-            href={mapsHref}
-            rel="noreferrer"
-            tabIndex={isOpen ? undefined : -1}
-            target="_blank"
-          >
-            Open maps
-          </a>
-        </div>
-        <div className="rsvp-row" aria-label="RSVP actions">
-          <button disabled={!isOpen} type="button">
-            Going
-          </button>
-          <button disabled={!isOpen} type="button">
-            Maybe
-          </button>
         </div>
       </div>
       <button
@@ -1300,12 +1314,19 @@ function InvitePreview({
         aria-label={isOpen ? "Close invitation envelope" : "Open invitation envelope"}
         title={isOpen ? "Close envelope" : "Open envelope"}
       >
-        <span className="envelope-back" />
+        <span className="envelope-back">
+          <span className="envelope-postmark" aria-hidden="true" />
+          <span className="envelope-stamp" aria-hidden="true">
+            P
+          </span>
+        </span>
         <span className="envelope-paper">
           <span>You are invited</span>
           <strong>{host}</strong>
         </span>
-        <span className="envelope-front" />
+        <span className="envelope-front">
+          <span className="envelope-recipient">Ryan Bott</span>
+        </span>
         <span className="envelope-flap" />
         <span className="wax-seal">P</span>
       </button>
