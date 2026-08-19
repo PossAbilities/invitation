@@ -1222,7 +1222,7 @@ function InvitePreview({
   const calendarDownloadName = `${slugify(eventName)}.ics`;
   const displayHeader = cardHeader.trim();
   const displayTitle = cardTitle.trim() || eventName;
-  const journeySteps = ["Invite sent", "Card opened", "RSVP", "Celebrate"];
+  const journeySteps = ["Invite sent", "Card opened", "RSVP", "Live the life"];
   const logoSrc =
     logoVariant === "wordmark"
       ? "/brand/possabilities-wordmark.png"
@@ -1317,7 +1317,7 @@ function InvitePreview({
         <span className="envelope-back">
           <span className="envelope-postmark" aria-hidden="true" />
           <span className="envelope-stamp" aria-hidden="true">
-            P
+            <img src="/brand/possabilities-stacked.png" alt="" />
           </span>
         </span>
         <span className="envelope-paper">
@@ -1328,7 +1328,7 @@ function InvitePreview({
           <span className="envelope-recipient">Ryan Bott</span>
         </span>
         <span className="envelope-flap" />
-        <span className="wax-seal">P</span>
+        <span className="wax-seal" aria-hidden="true" />
       </button>
     </div>
   );

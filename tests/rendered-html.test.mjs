@@ -51,9 +51,10 @@ test("server-renders the PossAbilities invitation prototype", async () => {
 });
 
 test("removes starter skeleton assets and dependency", async () => {
-  const [page, layout, packageJson] = await Promise.all([
+  const [page, layout, styles, packageJson] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
 
@@ -72,6 +73,10 @@ test("removes starter skeleton assets and dependency", async () => {
   assert.match(page, /Logo size/);
   assert.match(page, /Header line/);
   assert.match(page, /possabilities-stacked\.png/);
+  assert.match(styles, /--pink: #ec008c/i);
+  assert.match(styles, /--purple: #48065a/i);
+  assert.match(styles, /--teal: #66cccc/i);
+  assert.doesNotMatch(styles, /#c59a4d|#ff789a|#b10066/i);
   assert.match(page, /Invitation list/);
   assert.match(page, /Spreadsheet rows/);
   assert.match(page, /CSV file/);

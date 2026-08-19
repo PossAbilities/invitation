@@ -892,7 +892,12 @@ textarea:focus {
   border-radius: 16px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 22%),
-    linear-gradient(140deg, #2b1748 0%, #1c0d31 58%, #130821 100%);
+    linear-gradient(
+      140deg,
+      var(--purple) 0%,
+      color-mix(in srgb, var(--purple) 88%, #000000) 58%,
+      color-mix(in srgb, var(--purple) 72%, #000000) 100%
+    );
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 24px 70px rgba(35, 12, 48, 0.2);
 }
@@ -903,10 +908,10 @@ textarea:focus {
   inset: 0;
   opacity: 0.18;
   background-image:
-    radial-gradient(circle at 18% 17%, #f7c85f 0 3px, transparent 4px),
-    radial-gradient(circle at 78% 14%, #ff6f8f 0 3px, transparent 4px),
-    radial-gradient(circle at 12% 77%, #66cccc 0 3px, transparent 4px),
-    radial-gradient(circle at 88% 72%, #ec008c 0 3px, transparent 4px);
+    radial-gradient(circle at 18% 17%, var(--teal) 0 3px, transparent 4px),
+    radial-gradient(circle at 78% 14%, var(--pink) 0 3px, transparent 4px),
+    radial-gradient(circle at 12% 77%, #ffffff 0 3px, transparent 4px),
+    radial-gradient(circle at 88% 72%, var(--teal) 0 3px, transparent 4px);
 }
 
 .invite-stage::after {
@@ -961,11 +966,11 @@ textarea:focus {
 .envelope-back {
   overflow: hidden;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent 38%),
-    repeating-linear-gradient(12deg, rgba(255, 255, 255, 0.035) 0 2px, transparent 2px 7px),
-    linear-gradient(160deg, #c59a4d, #a87832 62%, #8d6028);
-  border: 1px solid rgba(50, 28, 11, 0.28);
-  box-shadow: 0 28px 76px rgba(0, 0, 0, 0.34);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.32) 38%, transparent 62%),
+    repeating-linear-gradient(12deg, rgba(72, 6, 90, 0.022) 0 2px, transparent 2px 7px),
+    linear-gradient(160deg, #ffffff, color-mix(in srgb, var(--teal) 20%, #ffffff) 62%, color-mix(in srgb, var(--purple) 8%, #ffffff));
+  border: 1px solid rgba(72, 6, 90, 0.16);
+  box-shadow: 0 28px 76px rgba(72, 6, 90, 0.28);
 }
 
 .envelope-postmark {
@@ -998,8 +1003,8 @@ textarea:focus {
   place-items: center;
   width: 52px;
   height: 42px;
-  color: #ffffff;
-  background: linear-gradient(145deg, var(--accent), #f479a8);
+  background: #ffffff;
+  border: 1px solid color-mix(in srgb, var(--pink) 46%, #ffffff);
   clip-path: polygon(
     0 8%,
     8% 8%,
@@ -1038,8 +1043,14 @@ textarea:focus {
     8% 92%,
     0 92%
   );
-  font-size: 1.4rem;
-  font-weight: 900;
+  box-shadow: 0 8px 18px rgba(72, 6, 90, 0.12);
+}
+
+.envelope-stamp img {
+  width: 38px;
+  height: 30px;
+  object-fit: contain;
+  display: block;
 }
 
 .envelope-paper {
@@ -1053,9 +1064,9 @@ textarea:focus {
   align-content: center;
   gap: 8px;
   color: var(--purple);
-  background: #fff8e9;
+  background: #ffffff;
   border: 1px solid rgba(72, 6, 90, 0.12);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 16px 40px rgba(72, 6, 90, 0.16);
   opacity: 0;
   transform: translateY(58px) scale(0.88);
   transition: transform 780ms cubic-bezier(0.22, 1, 0.36, 1), opacity 420ms ease;
@@ -1079,9 +1090,9 @@ textarea:focus {
   background:
     linear-gradient(32deg, transparent 49.6%, rgba(72, 6, 90, 0.22) 50%, transparent 50.8%),
     linear-gradient(148deg, transparent 49.6%, rgba(72, 6, 90, 0.2) 50%, transparent 50.8%),
-    linear-gradient(0deg, #c79a4d, #ae7a31);
+    linear-gradient(0deg, color-mix(in srgb, var(--teal) 14%, #ffffff), #ffffff);
   clip-path: polygon(0 37%, 50% 72%, 100% 37%, 100% 100%, 0 100%);
-  border: 1px solid rgba(50, 28, 11, 0.28);
+  border: 1px solid rgba(72, 6, 90, 0.16);
 }
 
 .envelope-recipient {
@@ -1089,7 +1100,7 @@ textarea:focus {
   left: 50%;
   top: 55%;
   transform: translate(-50%, -50%);
-  color: #23130e;
+  color: var(--purple);
   font-size: clamp(1rem, 2.3vw, 1.22rem);
   font-weight: 800;
   white-space: nowrap;
@@ -1098,8 +1109,8 @@ textarea:focus {
 .envelope-flap {
   z-index: 6;
   background:
-    linear-gradient(180deg, rgba(230, 187, 104, 0.98), rgba(174, 122, 49, 0.98)),
-    #bd8b3f;
+    linear-gradient(180deg, #ffffff, color-mix(in srgb, var(--teal) 18%, #ffffff)),
+    #ffffff;
   clip-path: polygon(0 0, 100% 0, 50% 62%);
   transform-origin: top center;
   backface-visibility: hidden;
@@ -1117,12 +1128,31 @@ textarea:focus {
   display: grid;
   place-items: center;
   color: #ffffff;
-  background: var(--accent);
-  border: 4px solid #2d174b;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.34);
-  font-size: 1.65rem;
-  font-weight: 900;
+  background:
+    linear-gradient(135deg, var(--pink), var(--purple) 52%, var(--teal));
+  border: 4px solid #ffffff;
+  box-shadow: 0 10px 24px rgba(72, 6, 90, 0.3);
   transition: transform 540ms ease, opacity 420ms ease;
+}
+
+.wax-seal::before,
+.wax-seal::after {
+  content: "";
+  border-radius: 50%;
+  display: block;
+}
+
+.wax-seal::before {
+  width: 20px;
+  height: 20px;
+  background: #ffffff;
+  opacity: 0.94;
+}
+
+.wax-seal::after {
+  position: absolute;
+  inset: 11px;
+  border: 2px solid rgba(255, 255, 255, 0.7);
 }
 
 .invite-card {
@@ -1134,7 +1164,7 @@ textarea:focus {
   color: #ffffff;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.025)),
-    #2b1748;
+    var(--purple);
   border: 1px solid rgba(255, 255, 255, 0.13);
   border-radius: 18px;
   box-shadow: 0 34px 90px rgba(0, 0, 0, 0.34);
@@ -1194,7 +1224,7 @@ textarea:focus {
 }
 
 .invite-tag {
-  color: #75dddd;
+  color: var(--teal);
   font-size: 0.7rem;
   letter-spacing: 0.18em;
   font-weight: 900;
@@ -1203,11 +1233,11 @@ textarea:focus {
 }
 
 .invite-card h3 {
-  color: #ff789a;
+  color: var(--pink);
   font-size: clamp(1.45rem, 3vw, 2.08rem);
   line-height: 0.98;
   text-align: center;
-  text-shadow: 0 3px 0 rgba(72, 6, 90, 0.22);
+  text-shadow: 0 3px 0 color-mix(in srgb, var(--purple) 74%, #000000);
 }
 
 .invite-card-header p {
@@ -1253,7 +1283,7 @@ textarea:focus {
   height: 36px;
   border-radius: 50%;
   color: #ffffff;
-  background: color-mix(in srgb, var(--accent) 78%, #57236a);
+  background: color-mix(in srgb, var(--pink) 76%, var(--purple));
   border: 3px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
   font-size: 0.82rem;
@@ -1263,7 +1293,7 @@ textarea:focus {
 
 .journey-step:nth-child(2) span,
 .journey-step:nth-child(4) span {
-  background: #2a9499;
+  background: color-mix(in srgb, var(--teal) 78%, var(--purple));
 }
 
 .journey-step strong {
@@ -1280,8 +1310,8 @@ textarea:focus {
   gap: 14px;
   color: #271633;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 250, 238, 0.96)),
-    #fff7e8;
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), color-mix(in srgb, var(--teal) 10%, #ffffff)),
+    #ffffff;
   border-radius: 16px;
   padding: clamp(16px, 2vw, 22px);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.86), 0 16px 38px rgba(0, 0, 0, 0.18);
@@ -1370,10 +1400,12 @@ textarea:focus {
   border: 0;
   border-radius: 999px;
   color: #ffffff;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 74%, #ff8c7a), var(--accent));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--pink) 86%, #ffffff), var(--pink));
   padding: 0 34px;
   font-weight: 900;
-  box-shadow: 0 7px 0 #b10066, 0 16px 30px rgba(236, 0, 140, 0.24);
+  box-shadow:
+    0 7px 0 color-mix(in srgb, var(--pink) 56%, var(--purple)),
+    0 16px 30px rgba(236, 0, 140, 0.24);
   transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 180ms ease;
 }
 
@@ -1383,7 +1415,9 @@ textarea:focus {
 
 .rsvp-row button:active {
   transform: translateY(3px);
-  box-shadow: 0 4px 0 #b10066, 0 10px 20px rgba(236, 0, 140, 0.18);
+  box-shadow:
+    0 4px 0 color-mix(in srgb, var(--pink) 56%, var(--purple)),
+    0 10px 20px rgba(236, 0, 140, 0.18);
 }
 
 .rsvp-row p {
