@@ -719,14 +719,16 @@ h3 {
 }
 
 label,
-.palette-field {
+.palette-field,
+.choice-field {
   display: grid;
   gap: 8px;
   min-width: 0;
 }
 
 label span,
-.palette-field legend {
+.palette-field legend,
+.choice-field legend {
   color: var(--purple);
   font-size: 0.72rem;
   font-weight: 900;
@@ -765,13 +767,91 @@ textarea:focus {
 }
 
 .message-field,
-.palette-field {
+.palette-field,
+.choice-field {
   margin-top: 2px;
 }
 
-.palette-field {
+.palette-field,
+.choice-field {
   border: 0;
+  margin-inline: 0;
   padding: 0;
+}
+
+.choice-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.choice-button {
+  min-height: 76px;
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  border: 1px solid rgba(72, 6, 90, 0.1);
+  border-radius: 12px;
+  color: var(--foreground);
+  background: rgba(255, 255, 255, 0.78);
+  padding: 12px;
+  text-align: left;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.choice-button:hover,
+.segment-button:hover {
+  transform: translateY(-1px);
+}
+
+.choice-button.selected {
+  border-color: color-mix(in srgb, var(--accent) 58%, var(--purple));
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 8%, #ffffff), #ffffff),
+    #ffffff;
+  box-shadow: 0 10px 26px rgba(72, 6, 90, 0.12);
+}
+
+.choice-button strong {
+  color: var(--purple);
+  font-size: 0.95rem;
+  line-height: 1.15;
+}
+
+.choice-button span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.32;
+}
+
+.segmented-control {
+  width: max-content;
+  max-width: 100%;
+  display: flex;
+  gap: 5px;
+  padding: 5px;
+  border: 1px solid rgba(72, 6, 90, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.segment-button {
+  min-height: 34px;
+  border: 0;
+  border-radius: 999px;
+  color: var(--purple);
+  background: transparent;
+  padding: 0 14px;
+  font-size: 0.86rem;
+  font-weight: 900;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease, color 180ms ease;
+}
+
+.segment-button.selected {
+  color: #ffffff;
+  background: var(--purple);
+  box-shadow: 0 8px 18px rgba(72, 6, 90, 0.18);
 }
 
 .swatches {
@@ -979,10 +1059,35 @@ textarea:focus {
   transition: transform 920ms cubic-bezier(0.22, 1, 0.36, 1), opacity 520ms ease;
 }
 
-.invite-card img {
-  width: 68px;
+.invite-logo {
   height: auto;
   justify-self: center;
+  max-width: min(184px, 78%);
+  object-fit: contain;
+}
+
+.invite-logo.stacked.small {
+  width: 52px;
+}
+
+.invite-logo.stacked.medium {
+  width: 68px;
+}
+
+.invite-logo.stacked.large {
+  width: 88px;
+}
+
+.invite-logo.wordmark.small {
+  width: 118px;
+}
+
+.invite-logo.wordmark.medium {
+  width: 148px;
+}
+
+.invite-logo.wordmark.large {
+  width: 178px;
 }
 
 .invite-tag {
@@ -1488,8 +1593,17 @@ textarea:focus {
   .registration-fields,
   .attention-grid,
   .review-grid,
-  .admin-metrics {
+  .admin-metrics,
+  .choice-grid {
     grid-template-columns: 1fr;
+  }
+
+  .segmented-control {
+    width: 100%;
+  }
+
+  .segment-button {
+    flex: 1 1 0;
   }
 
   .form-section {

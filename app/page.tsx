@@ -5,6 +5,8 @@ import { type CSSProperties, useMemo, useState } from "react";
 type InviteeStatus = "Going" | "Opened" | "Invited" | "Staged";
 type ViewMode = "campaigns" | "builder" | "recipients" | "admin";
 type BuilderStep = "design" | "recipients" | "send";
+type LogoVariant = "stacked" | "wordmark" | "none";
+type LogoSize = "small" | "medium" | "large";
 
 type Invitee = {
   name: string;
@@ -49,6 +51,18 @@ const palette = [
   { name: "Deep purple", value: "#48065a" },
 ];
 
+const logoOptions: Array<{ id: LogoVariant; label: string; helper: string }> = [
+  { id: "stacked", label: "Stacked", helper: "Best for a centred card" },
+  { id: "wordmark", label: "Wordmark", helper: "Wider PossAbilities logo" },
+  { id: "none", label: "No logo", helper: "Use text only" },
+];
+
+const logoSizeOptions: Array<{ id: LogoSize; label: string }> = [
+  { id: "small", label: "Small" },
+  { id: "medium", label: "Medium" },
+  { id: "large", label: "Large" },
+];
+
 const statusTone: Record<InviteeStatus, string> = {
   Going: "status-going",
   Opened: "status-opened",
@@ -64,7 +78,7 @@ const navItems: Array<{ id: ViewMode; label: string }> = [
 ];
 
 const builderSteps: Array<{ id: BuilderStep; label: string; helper: string }> = [
-  { id: "design", label: "Details", helper: "Event, message, card colour" },
+  { id: "design", label: "Details", helper: "Event, logo, card colour" },
   { id: "recipients", label: "People", helper: "Add or import your guest list" },
   { id: "send", label: "Review", helper: "Check before sending" },
 ];
@@ -390,6 +404,10 @@ export default function Home() {
   const [message, setMessage] = useState(
     "Join us for music, food, games, and a relaxed afternoon celebrating people living the life they choose."
   );
+  const [cardTitle, setCardTitle] = useState("Summer PossAbilities Social");
+  const [cardHeader, setCardHeader] = useState("Live The Life You Choose");
+  const [logoVariant, setLogoVariant] = useState<LogoVariant>("stacked");
+  const [logoSize, setLogoSize] = useState<LogoSize>("medium");
   const [accent, setAccent] = useState(palette[0].value);
   const [isOpen, setIsOpen] = useState(false);
   const [invitees, setInvitees] = useState<Invitee[]>(initialInvitees);
@@ -439,6 +457,11 @@ export default function Home() {
   function showBuilder(step: BuilderStep = "design") {
     setActiveStep(step);
     setActiveView("builder");
+  }
+
+  function updateEventName(value: string) {
+    setCardTitle((currentTitle) => (currentTitle === eventName ? value : currentTitle));
+    setEventName(value);
   }
 
   function addSingleInvitee() {
@@ -670,7 +693,7 @@ export default function Home() {
                         <span>Event name</span>
                         <input
                           value={eventName}
-                          onChange={(event) => setEventName(event.target.value)}
+                          onChange={(event) => updateEventName(event.target.value)}
                         />
                       </label>
                       <label>
@@ -702,6 +725,68 @@ export default function Home() {
                         />
                       </label>
                     </div>
+                  </section>
+
+                  <section className="form-section" aria-label="Card branding">
+                    <div className="form-section-head">
+                      <h3>Card branding</h3>
+                      <p>Choose how the PossAbilities logo, header line, and card title appear.</p>
+                    </div>
+                    <div className="form-grid">
+                      <label>
+                        <span>Card title</span>
+                        <input
+                          value={cardTitle}
+                          onChange={(event) => setCardTitle(event.target.value)}
+                        />
+                      </label>
+                      <label>
+                        <span>Header line</span>
+                        <input
+                          value={cardHeader}
+                          onChange={(event) => setCardHeader(event.target.value)}
+                        />
+                      </label>
+                    </div>
+
+                    <fieldset className="choice-field">
+                      <legend>Logo style</legend>
+                      <div className="choice-grid">
+                        {logoOptions.map((option) => (
+                          <button
+                            aria-pressed={logoVariant === option.id}
+                            className={
+                              logoVariant === option.id ? "choice-button selected" : "choice-button"
+                            }
+                            key={option.id}
+                            onClick={() => setLogoVariant(option.id)}
+                            type="button"
+                          >
+                            <strong>{option.label}</strong>
+                            <span>{option.helper}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </fieldset>
+
+                    <fieldset className="choice-field">
+                      <legend>Logo size</legend>
+                      <div className="segmented-control" aria-label="Logo size">
+                        {logoSizeOptions.map((option) => (
+                          <button
+                            aria-pressed={logoSize === option.id}
+                            className={
+                              logoSize === option.id ? "segment-button selected" : "segment-button"
+                            }
+                            key={option.id}
+                            onClick={() => setLogoSize(option.id)}
+                            type="button"
+                          >
+                            {option.label}
+                          </button>
+                        ))}
+                      </div>
+                    </fieldset>
                   </section>
 
                   <section className="form-section" aria-label="Invitation message">
@@ -848,12 +933,16 @@ export default function Home() {
                 </button>
               </div>
               <InvitePreview
+                cardHeader={cardHeader}
+                cardTitle={cardTitle}
                 eventDate={eventDate}
                 eventName={eventName}
                 eventTime={eventTime}
                 host={host}
                 isOpen={isOpen}
                 location={location}
+                logoSize={logoSize}
+                logoVariant={logoVariant}
                 message={message}
                 onToggle={() => setIsOpen((value) => !value)}
               />
@@ -1095,21 +1184,29 @@ function GuestList({ invitees }: { invitees: Invitee[] }) {
 }
 
 function InvitePreview({
+  cardHeader,
+  cardTitle,
   eventDate,
   eventName,
   eventTime,
   host,
   isOpen,
   location,
+  logoSize,
+  logoVariant,
   message,
   onToggle,
 }: {
+  cardHeader: string;
+  cardTitle: string;
   eventDate: string;
   eventName: string;
   eventTime: string;
   host: string;
   isOpen: boolean;
   location: string;
+  logoSize: LogoSize;
+  logoVariant: LogoVariant;
   message: string;
   onToggle: () => void;
 }) {
@@ -1123,14 +1220,26 @@ function InvitePreview({
   });
   const mapsHref = createMapsHref(location);
   const calendarDownloadName = `${slugify(eventName)}.ics`;
+  const displayHeader = cardHeader.trim();
+  const displayTitle = cardTitle.trim() || eventName;
+  const logoSrc =
+    logoVariant === "wordmark"
+      ? "/brand/possabilities-wordmark.png"
+      : "/brand/possabilities-stacked.png";
 
   return (
     <div className={isOpen ? "invite-stage open" : "invite-stage"}>
       <div className="mail-shadow" />
       <div className="invite-card" aria-hidden={!isOpen} aria-label="Invitation card preview">
-        <img src="/brand/possabilities-stacked.png" alt="" />
-        <span className="invite-tag">Live The Life You Choose</span>
-        <h3>{eventName}</h3>
+        {logoVariant !== "none" && (
+          <img
+            className={`invite-logo ${logoVariant} ${logoSize}`}
+            src={logoSrc}
+            alt="PossAbilities"
+          />
+        )}
+        {displayHeader && <span className="invite-tag">{displayHeader}</span>}
+        <h3>{displayTitle}</h3>
         <p>{message}</p>
         <dl>
           <div>

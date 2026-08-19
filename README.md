@@ -11,7 +11,8 @@ previewing the email envelope, and showing an animated RSVP invitation page.
   need attention.
 - Guided invitation builder with clear design, recipients, and review steps.
 - Responsive layouts for desktop, tablet, and mobile screens.
-- Editable event name, date, time, location, host, message, and card accent.
+- Editable event name, date, time, location, host, message, card accent, logo
+  style, logo size, header line, and card title.
 - Animated recipient preview with a closed envelope that opens into a full card
   view with RSVP buttons.
 - Guest actions for downloading an add-to-calendar file and opening the event
