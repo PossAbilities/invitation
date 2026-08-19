@@ -36,11 +36,11 @@ test("server-renders the PossAbilities invitation prototype", async () => {
 
   const html = await response.text();
   assert.match(html, /<title>PossAbilities Invitations<\/title>/i);
-  assert.match(html, /Invitation command centre/);
+  assert.match(html, /Campaigns/);
   assert.match(html, /New invitation/);
   assert.match(html, /Continue draft/);
   assert.match(html, /Import people/);
-  assert.match(html, /What needs attention/);
+  assert.match(html, /Needs attention/);
   assert.match(html, /Live The Life You Choose/);
   assert.match(html, /Summer PossAbilities Social/);
   assert.match(html, /Big Tea Meet Up/);
@@ -65,7 +65,7 @@ test("removes starter skeleton assets and dependency", async () => {
   assert.match(page, /Open maps/);
   assert.match(page, /text\/calendar/);
   assert.match(page, /google\.com\/maps\/search/);
-  assert.match(page, /Build the invitation list/);
+  assert.match(page, /Invitation list/);
   assert.match(page, /Spreadsheet rows/);
   assert.match(page, /CSV file/);
   assert.match(page, /Ryan - Superuser/);

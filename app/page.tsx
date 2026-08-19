@@ -86,22 +86,22 @@ const platformHealth = [
 const viewCopy: Record<ViewMode, { kicker: string; title: string; description: string }> = {
   campaigns: {
     kicker: "Live The Life You Choose",
-    title: "Invitation command centre",
+    title: "Campaigns",
     description: "Start a new invite, continue a draft, or check how live campaigns are doing.",
   },
   builder: {
     kicker: "Guided builder",
-    title: "Create an invitation",
+    title: "Create",
     description: "Work through the invitation in order: details, people, then review.",
   },
   recipients: {
     kicker: "People",
-    title: "Manage invitation people",
+    title: "People",
     description: "Add one person, paste spreadsheet rows, upload a CSV, and check guest status.",
   },
   admin: {
     kicker: "Ryan - Superuser",
-    title: "Superuser platform view",
+    title: "Superuser",
     description: "Monitor users, registrations, sending health, and data requests from one place.",
   },
 };
@@ -517,7 +517,7 @@ export default function Home() {
             <article className="start-workbench" aria-label="Start a new invitation">
               <div className="focus-copy">
                 <p className="label-text">Start here</p>
-                <h2>New PossAbilities invitation</h2>
+                <h2>Create invitation</h2>
                 <p>
                   Create the event, add people, preview the envelope reveal, then send a test before
                   the campaign goes live.
@@ -558,7 +558,7 @@ export default function Home() {
               <div className="panel-title split">
                 <div>
                   <p className="label-text">Active work</p>
-                  <h2>Invitations already started</h2>
+                  <h2>Invitations in progress</h2>
                 </div>
                 <button className="secondary-action compact" type="button" onClick={() => showBuilder()}>
                   Continue draft
@@ -604,7 +604,7 @@ export default function Home() {
             <aside className="activity-panel" aria-label="Recent campaign activity">
               <div className="panel-title">
                 <p className="label-text">Today</p>
-                <h2>What needs attention</h2>
+                <h2>Needs attention</h2>
               </div>
               <div className="attention-grid">
                 <article>
@@ -652,7 +652,7 @@ export default function Home() {
                   <div className="panel-title split">
                     <div>
                       <p className="label-text">Step 1 of 3</p>
-                      <h2>Event details and invitation look</h2>
+                      <h2>Event details</h2>
                       <p className="helper-text">
                         These details appear on the card guests see after opening the envelope.
                       </p>
@@ -835,7 +835,7 @@ export default function Home() {
               <div className="preview-head">
                 <div>
                   <p className="label-text">Recipient view</p>
-                  <h2>Invitation preview</h2>
+                  <h2>Preview</h2>
                   <p className="helper-text">The envelope starts closed. Open it to check the card.</p>
                 </div>
                 <button
@@ -990,7 +990,7 @@ function PeopleManager({
       <div className="panel-title split">
         <div>
           <p className="label-text">Recipients</p>
-          <h2>Build the invitation list</h2>
+          <h2>Invitation list</h2>
           <p className="helper-text">
             Add one person, paste rows from Excel, or upload a CSV export.
           </p>
@@ -1077,7 +1077,7 @@ function GuestList({ invitees }: { invitees: Invitee[] }) {
     <section className="guest-list-panel" aria-label="Current invitation list">
       <div className="panel-title">
         <p className="label-text">Current list</p>
-        <h2>People on this invitation</h2>
+        <h2>People invited</h2>
       </div>
       <div className="guest-list">
         {invitees.map((guest) => (
