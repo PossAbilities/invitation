@@ -7,7 +7,10 @@ previewing the email envelope, and showing an animated RSVP invitation page.
 
 - Campaign command centre for starting a new invitation or returning to active
   events without digging through crowded panels.
+- Clear dashboard sections for starting, continuing, and spotting items that
+  need attention.
 - Guided invitation builder with clear design, recipients, and review steps.
+- Responsive layouts for desktop, tablet, and mobile screens.
 - Editable event name, date, time, location, host, message, and card accent.
 - Animated recipient preview with a closed envelope that opens into a full card
   view with RSVP buttons.
@@ -17,7 +20,6 @@ previewing the email envelope, and showing an animated RSVP invitation page.
   data requests, and platform health.
 - Guest list, campaign response summary, and site-specific social preview
   metadata.
-- Site-specific social preview image and metadata.
 
 ## Next Product Steps
 

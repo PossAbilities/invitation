@@ -63,10 +63,10 @@ const navItems: Array<{ id: ViewMode; label: string }> = [
   { id: "admin", label: "Superuser" },
 ];
 
-const builderSteps: Array<{ id: BuilderStep; label: string }> = [
-  { id: "design", label: "Design" },
-  { id: "recipients", label: "Recipients" },
-  { id: "send", label: "Review" },
+const builderSteps: Array<{ id: BuilderStep; label: string; helper: string }> = [
+  { id: "design", label: "Details", helper: "Event, message, card colour" },
+  { id: "recipients", label: "People", helper: "Add or import your guest list" },
+  { id: "send", label: "Review", helper: "Check before sending" },
 ];
 
 const adminMetrics = [
@@ -81,6 +81,35 @@ const platformHealth = [
   { label: "New accounts", value: "3 pending" },
   { label: "Data requests", value: "0 open" },
   { label: "Failed sends", value: "2 today" },
+];
+
+const viewCopy: Record<ViewMode, { kicker: string; title: string; description: string }> = {
+  campaigns: {
+    kicker: "Live The Life You Choose",
+    title: "Invitation command centre",
+    description: "Start a new invite, continue a draft, or check how live campaigns are doing.",
+  },
+  builder: {
+    kicker: "Guided builder",
+    title: "Create an invitation",
+    description: "Work through the invitation in order: details, people, then review.",
+  },
+  recipients: {
+    kicker: "People",
+    title: "Manage invitation people",
+    description: "Add one person, paste spreadsheet rows, upload a CSV, and check guest status.",
+  },
+  admin: {
+    kicker: "Ryan - Superuser",
+    title: "Superuser platform view",
+    description: "Monitor users, registrations, sending health, and data requests from one place.",
+  },
+};
+
+const activityItems = [
+  "Priya Shah opened the summer social invitation",
+  "Morgan Price and Jamie Carter are staged from import",
+  "Big Tea Meet Up is currently sending",
 ];
 
 function isEmail(value: string) {
@@ -141,6 +170,14 @@ function mergeInvitees(current: Invitee[], incoming: Invitee[]) {
   return { next: [...fresh, ...current], added: fresh.length };
 }
 
+function campaignRate(campaign: Campaign) {
+  if (!campaign.guests) {
+    return 0;
+  }
+
+  return Math.min(100, Math.round((campaign.rsvps / campaign.guests) * 100));
+}
+
 export default function Home() {
   const [activeView, setActiveView] = useState<ViewMode>("campaigns");
   const [activeStep, setActiveStep] = useState<BuilderStep>("design");
@@ -196,6 +233,7 @@ export default function Home() {
     ],
     [eventDate, eventName, invitees.length, responseSummary.going]
   );
+  const currentView = viewCopy[activeView];
 
   function showBuilder(step: BuilderStep = "design") {
     setActiveStep(step);
@@ -261,14 +299,10 @@ export default function Home() {
 
       <section className="workspace" id="main-content">
         <div className="workspace-header">
-          <div>
-            <p className="section-kicker">Live The Life You Choose</p>
-            <h1>
-              {activeView === "campaigns" && "Invitation command centre"}
-              {activeView === "builder" && "Create an invitation"}
-              {activeView === "recipients" && "Manage invitation people"}
-              {activeView === "admin" && "Superuser platform view"}
-            </h1>
+          <div className="page-copy">
+            <p className="section-kicker">{currentView.kicker}</p>
+            <h1>{currentView.title}</h1>
+            <p>{currentView.description}</p>
           </div>
           <div className="status-strip" aria-label="Campaign status summary">
             <span>{responseSummary.invited} listed</span>
@@ -278,16 +312,33 @@ export default function Home() {
         </div>
 
         {activeView === "campaigns" && (
-          <section className="campaign-shell" aria-label="Campaigns">
-            <div className="campaign-focus">
+          <section className="command-grid" aria-label="Campaigns">
+            <article className="start-workbench" aria-label="Start a new invitation">
               <div className="focus-copy">
-                <p className="label-text">Next up</p>
-                <h2>{eventName}</h2>
-                <p>{eventDate} at {location}</p>
+                <p className="label-text">Start here</p>
+                <h2>New PossAbilities invitation</h2>
+                <p>
+                  Create the event, add people, preview the envelope reveal, then send a test before
+                  the campaign goes live.
+                </p>
+              </div>
+              <div className="start-options" aria-label="Invitation creation steps">
+                {builderSteps.map((step, index) => (
+                  <button
+                    className="start-option"
+                    key={step.id}
+                    type="button"
+                    onClick={() => showBuilder(step.id)}
+                  >
+                    <span>{index + 1}</span>
+                    <strong>{step.label}</strong>
+                    <small>{step.helper}</small>
+                  </button>
+                ))}
               </div>
               <div className="focus-actions">
                 <button className="primary-action" type="button" onClick={() => showBuilder()}>
-                  Continue draft
+                  Start new invitation
                 </button>
                 <button
                   className="secondary-action"
@@ -297,49 +348,83 @@ export default function Home() {
                     setActiveStep("recipients");
                   }}
                 >
-                  Manage people
+                  Import people
                 </button>
               </div>
-              <div className="campaign-progress" aria-label="Draft progress">
-                <div>
-                  <strong>Design</strong>
-                  <span>Ready</span>
-                </div>
-                <div>
-                  <strong>Guests</strong>
-                  <span>{invitees.length} listed</span>
-                </div>
-                <div>
-                  <strong>Review</strong>
-                  <span>Draft</span>
-                </div>
-              </div>
-            </div>
+            </article>
 
-            <div className="campaign-list" aria-label="Active invitations">
-              {campaigns.map((campaign) => (
-                <article className="campaign-row" key={campaign.title}>
-                  <div>
-                    <span className="campaign-status">{campaign.status}</span>
-                    <h3>{campaign.title}</h3>
-                    <p>{campaign.date}</p>
-                  </div>
-                  <dl>
-                    <div>
-                      <dt>Guests</dt>
-                      <dd>{campaign.guests}</dd>
-                    </div>
-                    <div>
-                      <dt>RSVPs</dt>
-                      <dd>{campaign.rsvps}</dd>
-                    </div>
-                  </dl>
-                  <button type="button" onClick={() => showBuilder()}>
-                    Open
-                  </button>
+            <section className="active-campaigns" aria-label="Active invitations">
+              <div className="panel-title split">
+                <div>
+                  <p className="label-text">Active work</p>
+                  <h2>Invitations already started</h2>
+                </div>
+                <button className="secondary-action compact" type="button" onClick={() => showBuilder()}>
+                  Continue draft
+                </button>
+              </div>
+              <div className="campaign-list">
+                {campaigns.map((campaign) => {
+                  const rate = campaignRate(campaign);
+
+                  return (
+                    <article
+                      className="campaign-row"
+                      key={campaign.title}
+                      style={{ "--progress": `${rate}%` } as CSSProperties}
+                    >
+                      <div className="campaign-main">
+                        <span className="campaign-status">{campaign.status}</span>
+                        <h3>{campaign.title}</h3>
+                        <p>{campaign.date}</p>
+                      </div>
+                      <dl>
+                        <div>
+                          <dt>Guests</dt>
+                          <dd>{campaign.guests}</dd>
+                        </div>
+                        <div>
+                          <dt>RSVPs</dt>
+                          <dd>{campaign.rsvps}</dd>
+                        </div>
+                      </dl>
+                      <div className="campaign-response" aria-label={`${rate}% response rate`}>
+                        <span />
+                      </div>
+                      <button type="button" onClick={() => showBuilder()}>
+                        Open
+                      </button>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+
+            <aside className="activity-panel" aria-label="Recent campaign activity">
+              <div className="panel-title">
+                <p className="label-text">Today</p>
+                <h2>What needs attention</h2>
+              </div>
+              <div className="attention-grid">
+                <article>
+                  <strong>{responseSummary.staged}</strong>
+                  <span>ready to invite</span>
                 </article>
-              ))}
-            </div>
+                <article>
+                  <strong>2</strong>
+                  <span>failed sends</span>
+                </article>
+                <article>
+                  <strong>3</strong>
+                  <span>account approvals</span>
+                </article>
+              </div>
+              <div className="activity-feed">
+                {activityItems.map((item) => (
+                  <p key={item}>{item}</p>
+                ))}
+              </div>
+            </aside>
           </section>
         )}
 
@@ -353,8 +438,9 @@ export default function Home() {
                   type="button"
                   onClick={() => setActiveStep(step.id)}
                 >
-                  <span>{index + 1}</span>
-                  {step.label}
+                  <span className="step-index">{index + 1}</span>
+                  <strong>{step.label}</strong>
+                  <small>{step.helper}</small>
                 </button>
               ))}
             </aside>
@@ -362,73 +448,92 @@ export default function Home() {
             <section className="builder-main">
               {activeStep === "design" && (
                 <div className="builder-panel">
-                  <div className="panel-title">
-                    <p className="label-text">Design</p>
-                    <h2>Event details and card style</h2>
-                  </div>
-                  <div className="form-grid">
-                    <label>
-                      <span>Event name</span>
-                      <input
-                        value={eventName}
-                        onChange={(event) => setEventName(event.target.value)}
-                      />
-                    </label>
-                    <label>
-                      <span>Date</span>
-                      <input
-                        value={eventDate}
-                        onChange={(event) => setEventDate(event.target.value)}
-                      />
-                    </label>
-                    <label>
-                      <span>Time</span>
-                      <input
-                        value={eventTime}
-                        onChange={(event) => setEventTime(event.target.value)}
-                      />
-                    </label>
-                    <label>
-                      <span>Place</span>
-                      <input
-                        value={location}
-                        onChange={(event) => setLocation(event.target.value)}
-                      />
-                    </label>
-                    <label>
-                      <span>Host</span>
-                      <input
-                        value={host}
-                        onChange={(event) => setHost(event.target.value)}
-                      />
-                    </label>
-                  </div>
-
-                  <label className="message-field">
-                    <span>Invite message</span>
-                    <textarea
-                      value={message}
-                      onChange={(event) => setMessage(event.target.value)}
-                      rows={4}
-                    />
-                  </label>
-
-                  <fieldset className="palette-field">
-                    <legend>Card accent</legend>
-                    <div className="swatches">
-                      {palette.map((color) => (
-                        <button
-                          className={accent === color.value ? "swatch selected" : "swatch"}
-                          key={color.value}
-                          onClick={() => setAccent(color.value)}
-                          style={{ backgroundColor: color.value }}
-                          type="button"
-                          aria-label={color.name}
-                          title={color.name}
-                        />
-                      ))}
+                  <div className="panel-title split">
+                    <div>
+                      <p className="label-text">Step 1 of 3</p>
+                      <h2>Event details and invitation look</h2>
+                      <p className="helper-text">
+                        These details appear on the card guests see after opening the envelope.
+                      </p>
                     </div>
-                  </fieldset>
+                    <span className="count-chip">Draft autosaved</span>
+                  </div>
+
+                  <section className="form-section" aria-label="Event information">
+                    <div className="form-section-head">
+                      <h3>Event information</h3>
+                      <p>Name the event clearly and keep the place recognisable for guests.</p>
+                    </div>
+                    <div className="form-grid">
+                      <label>
+                        <span>Event name</span>
+                        <input
+                          value={eventName}
+                          onChange={(event) => setEventName(event.target.value)}
+                        />
+                      </label>
+                      <label>
+                        <span>Date</span>
+                        <input
+                          value={eventDate}
+                          onChange={(event) => setEventDate(event.target.value)}
+                        />
+                      </label>
+                      <label>
+                        <span>Time</span>
+                        <input
+                          value={eventTime}
+                          onChange={(event) => setEventTime(event.target.value)}
+                        />
+                      </label>
+                      <label>
+                        <span>Place</span>
+                        <input
+                          value={location}
+                          onChange={(event) => setLocation(event.target.value)}
+                        />
+                      </label>
+                      <label>
+                        <span>Host</span>
+                        <input
+                          value={host}
+                          onChange={(event) => setHost(event.target.value)}
+                        />
+                      </label>
+                    </div>
+                  </section>
+
+                  <section className="form-section" aria-label="Invitation message">
+                    <div className="form-section-head">
+                      <h3>Message and brand colour</h3>
+                      <p>Keep the message short. The card preview updates as you type.</p>
+                    </div>
+                    <label className="message-field">
+                      <span>Invite message</span>
+                      <textarea
+                        value={message}
+                        onChange={(event) => setMessage(event.target.value)}
+                        rows={4}
+                      />
+                    </label>
+
+                    <fieldset className="palette-field">
+                      <legend>Card accent</legend>
+                      <div className="swatches">
+                        {palette.map((color) => (
+                          <button
+                            className={accent === color.value ? "swatch selected" : "swatch"}
+                            key={color.value}
+                            onClick={() => setAccent(color.value)}
+                            style={{ backgroundColor: color.value }}
+                            type="button"
+                            aria-label={color.name}
+                            title={color.name}
+                          />
+                        ))}
+                      </div>
+                    </fieldset>
+                  </section>
 
                   <div className="form-actions">
                     <button
@@ -474,8 +579,12 @@ export default function Home() {
               {activeStep === "send" && (
                 <div className="builder-panel review-panel">
                   <div className="panel-title">
-                    <p className="label-text">Review</p>
-                    <h2>Ready to test-send</h2>
+                    <p className="label-text">Step 3 of 3</p>
+                    <h2>Review before sending</h2>
+                    <p className="helper-text">
+                      This screen keeps the important checks together before the invitation leaves
+                      the platform.
+                    </p>
                   </div>
                   <div className="review-grid">
                     <article>
@@ -522,6 +631,7 @@ export default function Home() {
                 <div>
                   <p className="label-text">Recipient view</p>
                   <h2>Invitation preview</h2>
+                  <p className="helper-text">The envelope starts closed. Open it to check the card.</p>
                 </div>
                 <button
                   className="secondary-action compact"
@@ -529,7 +639,7 @@ export default function Home() {
                   onClick={() => setIsOpen((value) => !value)}
                   aria-pressed={isOpen}
                 >
-                  {isOpen ? "Close" : "Open"}
+                  {isOpen ? "Reset envelope" : "Open envelope"}
                 </button>
               </div>
               <InvitePreview
@@ -676,12 +786,19 @@ function PeopleManager({
         <div>
           <p className="label-text">Recipients</p>
           <h2>Build the invitation list</h2>
+          <p className="helper-text">
+            Add one person, paste rows from Excel, or upload a CSV export.
+          </p>
         </div>
         <div className="count-chip">{invitees.length} listed</div>
       </div>
 
       <div className="people-layout">
         <div className="single-add">
+          <div className="form-section-head">
+            <h3>Add one person</h3>
+            <p>Useful when someone asks to be included after the main list is ready.</p>
+          </div>
           <label>
             <span>Name</span>
             <input
@@ -705,6 +822,10 @@ function PeopleManager({
         </div>
 
         <div className="bulk-add">
+          <div className="form-section-head">
+            <h3>Import a list</h3>
+            <p>Paste names and emails from a spreadsheet, or upload a CSV file.</p>
+          </div>
           <label>
             <span>Spreadsheet rows</span>
             <textarea
@@ -713,6 +834,7 @@ function PeopleManager({
               rows={6}
             />
           </label>
+          <p className="field-hint">Accepted format: name, email. One person per row.</p>
           <div className="bulk-actions">
             <label className="file-import">
               <span>CSV file</span>
@@ -730,7 +852,7 @@ function PeopleManager({
               />
             </label>
             <button className="secondary-action" type="button" onClick={onImport}>
-              Import
+              Import people
             </button>
             <button className="text-action" type="button" onClick={onClearBulk}>
               Clear

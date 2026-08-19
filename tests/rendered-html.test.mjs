@@ -39,7 +39,8 @@ test("server-renders the PossAbilities invitation prototype", async () => {
   assert.match(html, /Invitation command centre/);
   assert.match(html, /New invitation/);
   assert.match(html, /Continue draft/);
-  assert.match(html, /Manage people/);
+  assert.match(html, /Import people/);
+  assert.match(html, /What needs attention/);
   assert.match(html, /Live The Life You Choose/);
   assert.match(html, /Summer PossAbilities Social/);
   assert.match(html, /Big Tea Meet Up/);
@@ -58,6 +59,8 @@ test("removes starter skeleton assets and dependency", async () => {
 
   assert.match(page, /possabilities-wordmark\.png/);
   assert.match(page, /invite-stage/);
+  assert.match(page, /command-grid/);
+  assert.match(page, /Start new invitation/);
   assert.match(page, /Build the invitation list/);
   assert.match(page, /Spreadsheet rows/);
   assert.match(page, /CSV file/);
