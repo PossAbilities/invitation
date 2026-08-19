@@ -112,6 +112,33 @@ const activityItems = [
   "Big Tea Meet Up is currently sending",
 ];
 
+const months: Record<string, number> = {
+  jan: 0,
+  january: 0,
+  feb: 1,
+  february: 1,
+  mar: 2,
+  march: 2,
+  apr: 3,
+  april: 3,
+  may: 4,
+  jun: 5,
+  june: 5,
+  jul: 6,
+  july: 6,
+  aug: 7,
+  august: 7,
+  sep: 8,
+  sept: 8,
+  september: 8,
+  oct: 9,
+  october: 9,
+  nov: 10,
+  november: 10,
+  dec: 11,
+  december: 11,
+};
+
 function isEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
@@ -176,6 +203,180 @@ function campaignRate(campaign: Campaign) {
   }
 
   return Math.min(100, Math.round((campaign.rsvps / campaign.guests) * 100));
+}
+
+function padDatePart(value: number) {
+  return String(value).padStart(2, "0");
+}
+
+function slugify(value: string) {
+  return (
+    value
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "") || "possabilities-invitation"
+  );
+}
+
+function parseDateText(value: string) {
+  const named = value.match(/(\d{1,2})\s+([a-z]+)\s+(\d{4})/i);
+  if (named) {
+    const month = months[named[2].toLowerCase()];
+
+    if (month !== undefined) {
+      return {
+        day: Number(named[1]),
+        month,
+        year: Number(named[3]),
+      };
+    }
+  }
+
+  const iso = value.match(/\b(\d{4})-(\d{1,2})-(\d{1,2})\b/);
+  if (iso) {
+    return {
+      day: Number(iso[3]),
+      month: Number(iso[2]) - 1,
+      year: Number(iso[1]),
+    };
+  }
+
+  const numeric = value.match(/\b(\d{1,2})[/-](\d{1,2})[/-](\d{4})\b/);
+  if (numeric) {
+    return {
+      day: Number(numeric[1]),
+      month: Number(numeric[2]) - 1,
+      year: Number(numeric[3]),
+    };
+  }
+
+  return null;
+}
+
+function parseClockTime(value: string) {
+  const match = value.trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)?$/i);
+
+  if (!match) {
+    return null;
+  }
+
+  const meridiem = match[3]?.toLowerCase();
+  let hour = Number(match[1]);
+  const minute = Number(match[2] ?? "0");
+
+  if (meridiem === "pm" && hour < 12) {
+    hour += 12;
+  }
+
+  if (meridiem === "am" && hour === 12) {
+    hour = 0;
+  }
+
+  if (hour > 23 || minute > 59) {
+    return null;
+  }
+
+  return { hour, minute };
+}
+
+function parseEventDateTime(dateText: string, timeText: string) {
+  const date = parseDateText(dateText);
+
+  if (!date) {
+    return null;
+  }
+
+  const [rawStart = "", rawEnd] = timeText.split(/\s*[-–—]\s*/);
+  const endMeridiem = rawEnd?.match(/\b(am|pm)\b/i)?.[1];
+  const startText =
+    endMeridiem && !/\b(am|pm)\b/i.test(rawStart) ? `${rawStart}${endMeridiem}` : rawStart;
+  const start = parseClockTime(startText) ?? { hour: 9, minute: 0 };
+  const end = rawEnd ? parseClockTime(rawEnd) : null;
+  const startDate = new Date(date.year, date.month, date.day, start.hour, start.minute);
+  const endDate = end
+    ? new Date(date.year, date.month, date.day, end.hour, end.minute)
+    : new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
+
+  if (endDate <= startDate) {
+    endDate.setDate(endDate.getDate() + 1);
+  }
+
+  return { startDate, endDate };
+}
+
+function formatCalendarDate(value: Date) {
+  return [
+    value.getFullYear(),
+    padDatePart(value.getMonth() + 1),
+    padDatePart(value.getDate()),
+    "T",
+    padDatePart(value.getHours()),
+    padDatePart(value.getMinutes()),
+    "00",
+  ].join("");
+}
+
+function formatCalendarStamp(value: Date) {
+  return [
+    value.getUTCFullYear(),
+    padDatePart(value.getUTCMonth() + 1),
+    padDatePart(value.getUTCDate()),
+    "T",
+    padDatePart(value.getUTCHours()),
+    padDatePart(value.getUTCMinutes()),
+    padDatePart(value.getUTCSeconds()),
+    "Z",
+  ].join("");
+}
+
+function escapeCalendarText(value: string) {
+  return value.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
+}
+
+function createCalendarHref({
+  eventDate,
+  eventName,
+  eventTime,
+  host,
+  location,
+  message,
+}: {
+  eventDate: string;
+  eventName: string;
+  eventTime: string;
+  host: string;
+  location: string;
+  message: string;
+}) {
+  const parsed = parseEventDateTime(eventDate, eventTime);
+  const fallbackStart = new Date(2026, 8, 18, 14, 0);
+  const fallbackEnd = new Date(2026, 8, 18, 17, 30);
+  const startDate = parsed?.startDate ?? fallbackStart;
+  const endDate = parsed?.endDate ?? fallbackEnd;
+  const description = `${message}\n\n${eventDate} at ${eventTime}\nHosted by ${host}\nLocation: ${location}`;
+  const ics = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//PossAbilities//Invitations//EN",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    "BEGIN:VEVENT",
+    `UID:${slugify(eventName)}@possabilities-invitations`,
+    `DTSTAMP:${formatCalendarStamp(new Date())}`,
+    `DTSTART:${formatCalendarDate(startDate)}`,
+    `DTEND:${formatCalendarDate(endDate)}`,
+    `SUMMARY:${escapeCalendarText(eventName)}`,
+    `DESCRIPTION:${escapeCalendarText(description)}`,
+    `LOCATION:${escapeCalendarText(location)}`,
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n");
+
+  return `data:text/calendar;charset=utf-8,${encodeURIComponent(ics)}`;
+}
+
+function createMapsHref(location: string) {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
 }
 
 export default function Home() {
@@ -610,6 +811,10 @@ export default function Home() {
                       Guest list checked
                     </div>
                     <div>
+                      <span className="check-mark" />
+                      Calendar and maps links included
+                    </div>
+                    <div>
                       <span className="check-mark muted" />
                       Email sending provider pending
                     </div>
@@ -908,6 +1113,17 @@ function InvitePreview({
   message: string;
   onToggle: () => void;
 }) {
+  const calendarHref = createCalendarHref({
+    eventDate,
+    eventName,
+    eventTime,
+    host,
+    location,
+    message,
+  });
+  const mapsHref = createMapsHref(location);
+  const calendarDownloadName = `${slugify(eventName)}.ics`;
+
   return (
     <div className={isOpen ? "invite-stage open" : "invite-stage"}>
       <div className="mail-shadow" />
@@ -927,9 +1143,38 @@ function InvitePreview({
           </div>
           <div>
             <dt>Place</dt>
-            <dd>{location}</dd>
+            <dd>
+              <a
+                className="map-link"
+                href={mapsHref}
+                rel="noreferrer"
+                tabIndex={isOpen ? undefined : -1}
+                target="_blank"
+              >
+                {location}
+              </a>
+            </dd>
           </div>
         </dl>
+        <div className="guest-tools" aria-label="Guest event tools">
+          <a
+            className="guest-tool primary"
+            download={calendarDownloadName}
+            href={calendarHref}
+            tabIndex={isOpen ? undefined : -1}
+          >
+            Add to calendar
+          </a>
+          <a
+            className="guest-tool"
+            href={mapsHref}
+            rel="noreferrer"
+            tabIndex={isOpen ? undefined : -1}
+            target="_blank"
+          >
+            Open maps
+          </a>
+        </div>
         <div className="rsvp-row" aria-label="RSVP actions">
           <button disabled={!isOpen} type="button">
             Going

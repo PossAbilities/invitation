@@ -14,6 +14,8 @@ previewing the email envelope, and showing an animated RSVP invitation page.
 - Editable event name, date, time, location, host, message, and card accent.
 - Animated recipient preview with a closed envelope that opens into a full card
   view with RSVP buttons.
+- Guest actions for downloading an add-to-calendar file and opening the event
+  location in maps.
 - Dedicated recipient manager with one-by-one entry plus CSV and pasted
   spreadsheet row import.
 - Separate superuser monitoring area for registration, approvals, email queue,

@@ -1019,6 +1019,48 @@ textarea:focus {
   font-weight: 800;
 }
 
+.map-link {
+  color: inherit;
+  text-decoration-color: rgba(236, 0, 140, 0.38);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.map-link:hover {
+  color: var(--pink);
+}
+
+.guest-tools {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.guest-tool {
+  min-height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(72, 6, 90, 0.12);
+  border-radius: 999px;
+  color: var(--purple);
+  background: rgba(102, 204, 204, 0.18);
+  padding: 0 12px;
+  font-size: 0.86rem;
+  font-weight: 900;
+  text-align: center;
+  text-decoration: none;
+  transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+}
+
+.guest-tool.primary {
+  color: #ffffff;
+  background: var(--purple);
+}
+
+.guest-tool:hover {
+  transform: translateY(-1px);
+}
+
 .rsvp-row {
   display: flex;
   gap: 10px;
@@ -1455,9 +1497,14 @@ textarea:focus {
     align-items: stretch;
   }
 
+  .guest-tools {
+    grid-template-columns: 1fr;
+  }
+
   .primary-action,
   .secondary-action,
   .text-action,
+  .guest-tool,
   .rsvp-row button {
     width: 100%;
   }
