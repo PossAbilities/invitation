@@ -1,0 +1,36 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "possabilities-invitations",
+  "main": "./worker/index.ts",
+  "compatibility_date": "2026-05-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+
+  // Public origin used to build guest invitation links in outgoing email.
+  // Overridden per environment; the default is the production hostname.
+  "vars": {
+    "APP_ORIGIN": "https://invitation.possabilities.org.uk"
+  },
+
+  // database_id is filled in per account. Create it once with:
+  //   npx wrangler d1 create possabilities-invitations
+  // then paste the id it prints here. Local `vinext dev` ignores the value and
+  // uses a Miniflare SQLite file under .wrangler/.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "possabilities-invitations",
+      "database_id": "00000000-0000-4000-8000-000000000000",
+      "migrations_dir": "drizzle"
+    }
+  ],
+
+  "images": { "binding": "IMAGES" }
+
+  // Secrets are NOT set here -- anything in this file is committed. Set them with
+  // `npx wrangler secret put NAME`:
+  //   RESEND_API_KEY        sending key from resend.com
+  //   INVITE_FROM_EMAIL     verified sender, e.g. invitations@possabilities.org.uk
+  //   ACCESS_TEAM_DOMAIN    e.g. possabilities.cloudflareaccess.com
+  //   ACCESS_AUD            Application Audience tag from the Access app
+}

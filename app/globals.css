@@ -2025,3 +2025,168 @@ textarea:focus {
     transition-duration: 1ms !important;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Guest invitation page (/i/:token)
+
+   The recipient's view. Reuses the envelope and card from the builder preview,
+   and adds the RSVP form that the preview only mocks up.
+   --------------------------------------------------------------------------- */
+
+.guest-shell {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  width: min(100% - 24px, 620px);
+  margin: 0 auto;
+  padding: clamp(16px, 4vw, 40px) 0;
+}
+
+.guest-shell .invite-stage {
+  width: 100%;
+}
+
+/* The guest card leads with an h1; the builder preview uses an h3. */
+.invite-card h1 {
+  margin: 0;
+  color: var(--pink-on-dark);
+  font-size: clamp(1.45rem, 3vw, 2.08rem);
+  line-height: 1.02;
+  text-align: center;
+}
+
+.rsvp-form {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(72, 6, 90, 0.14);
+}
+
+.rsvp-form fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.rsvp-form legend {
+  padding: 0 0 8px;
+  color: var(--pink-ink);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rsvp-choices {
+  display: grid;
+  gap: 8px;
+}
+
+.rsvp-choices label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  /* Comfortably above the 44px minimum touch target. */
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid rgba(72, 6, 90, 0.16);
+  border-radius: 12px;
+  background: #ffffff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.rsvp-choices input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--pink-ink);
+}
+
+.rsvp-choices label:has(input:checked) {
+  border-color: var(--pink-ink);
+  box-shadow: inset 0 0 0 1px var(--pink-ink);
+}
+
+.rsvp-field {
+  display: grid;
+  gap: 6px;
+}
+
+.rsvp-field span {
+  color: #4a3d52;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.rsvp-field input,
+.rsvp-field textarea {
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid rgba(72, 6, 90, 0.18);
+  border-radius: 10px;
+  background: #ffffff;
+  color: #231f20;
+}
+
+.rsvp-form button {
+  min-height: 48px;
+  border: 0;
+  border-radius: 999px;
+  color: #ffffff;
+  background: var(--purple);
+  padding: 0 26px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.rsvp-form button:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.rsvp-message {
+  margin: 0;
+  color: #1f6b3f;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.rsvp-message.error {
+  /* 5.9:1 on white. */
+  color: #b3261e;
+}
+
+/* On the guest page the card is the whole point, not a preview thumbnail, so it
+   grows to fit its content and the page scrolls. Constraining it to a fixed
+   stage would push the RSVP form into an inner scroll area that most people
+   never find. */
+.guest-shell .invite-stage {
+  height: auto;
+  min-height: clamp(440px, 66vh, 560px);
+  padding: 14px;
+  overflow: visible;
+}
+
+.guest-shell .mail-shadow,
+.guest-shell .envelope {
+  position: absolute;
+}
+
+.guest-shell .invite-card {
+  width: min(430px, 100%);
+  max-height: none;
+  overflow: visible;
+}
+
+/* Only once opened does the card join the layout flow and give the stage its
+   height. While closed it stays out of flow so the stage is envelope-sized. */
+.guest-shell .invite-stage.open .invite-card {
+  position: relative;
+  top: 0;
+  margin: 0 auto;
+}
+
+.guest-shell .invite-card-shell {
+  overflow: visible;
+}
