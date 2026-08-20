@@ -225,6 +225,9 @@ export default function Home() {
     "Morgan Price,morgan.price@example.org\nJamie Carter,jamie.carter@example.org"
   );
   const [importNotice, setImportNotice] = useState("2 rows ready");
+  const [eventId, setEventId] = useState<string | null>(null);
+  const [sendNotice, setSendNotice] = useState("");
+  const [isBusy, setIsBusy] = useState(false);
 
   const eventDateLabel = formatEventDate(eventDate);
   const eventTimeLabel = formatEventTime(startTime, endTime);
@@ -292,6 +295,88 @@ export default function Home() {
     setImportNotice(added ? "1 person added" : "That email is already listed");
     setNewGuestName("");
     setNewGuestEmail("");
+  }
+
+  /**
+   * Persists the current builder state, creating the event on first save and
+   * updating it afterwards. Returns the event id so the send actions can chain
+   * onto it without the user having to remember to save first.
+   */
+  async function saveDraft(): Promise<string | null> {
+    const response = await fetch("/api/events", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        accent,
+        cardHeader,
+        cardTitle,
+        endTime,
+        eventDate,
+        host,
+        id: eventId,
+        location,
+        logoSize,
+        logoVariant,
+        message,
+        name: eventName,
+        recipients: invitees.map((guest) => ({ name: guest.name, email: guest.email })),
+        startTime,
+      }),
+    });
+
+    const body = (await response.json().catch(() => ({}))) as {
+      error?: string;
+      id?: string;
+    };
+
+    if (!response.ok || !body.id) {
+      setSendNotice(body.error ?? "Could not save this invitation.");
+      return null;
+    }
+
+    setEventId(body.id);
+    return body.id;
+  }
+
+  async function runAction(action: "save" | "test" | "send") {
+    setIsBusy(true);
+    setSendNotice(action === "save" ? "Saving..." : "Working...");
+
+    try {
+      const id = await saveDraft();
+      if (!id) return;
+
+      if (action === "save") {
+        setSendNotice("Draft saved.");
+        return;
+      }
+
+      const response = await fetch(`/api/events/${id}/${action === "test" ? "test" : "send"}`, {
+        method: "POST",
+      });
+      const body = (await response.json().catch(() => ({}))) as {
+        error?: string;
+        failed?: number;
+        sent?: number;
+        sentTo?: string;
+      };
+
+      if (!response.ok) {
+        setSendNotice(body.error ?? "That did not work.");
+        return;
+      }
+
+      setSendNotice(
+        action === "test"
+          ? `Test invitation sent to ${body.sentTo}.`
+          : `Sent to ${body.sent} ${body.sent === 1 ? "person" : "people"}` +
+              (body.failed ? `, ${body.failed} failed.` : "."),
+      );
+    } catch {
+      setSendNotice("Could not reach the server. Please try again.");
+    } finally {
+      setIsBusy(false);
+    }
   }
 
   function importBulkInvitees() {
@@ -491,7 +576,7 @@ export default function Home() {
                         These details appear on the card guests see after opening the envelope.
                       </p>
                     </div>
-                    <span className="count-chip">Draft autosaved</span>
+                    <span className="count-chip">{eventId ? "Draft saved" : "Not saved yet"}</span>
                   </div>
 
                   <section className="form-section" aria-label="Event information">
@@ -650,7 +735,12 @@ export default function Home() {
                     >
                       Next: recipients
                     </button>
-                    <button className="text-action" type="button">
+                    <button
+                      className="text-action"
+                      disabled={isBusy}
+                      onClick={() => void runAction("save")}
+                      type="button"
+                    >
                       Save draft
                     </button>
                   </div>
@@ -721,18 +811,33 @@ export default function Home() {
                       Calendar and maps links included
                     </div>
                     <div>
-                      <span className="check-mark muted" />
-                      Email sending provider pending
+                      <span className={eventId ? "check-mark" : "check-mark muted"} />
+                      {eventId ? "Invitation saved" : "Not saved yet"}
                     </div>
                   </div>
                   <div className="form-actions">
-                    <button className="primary-action" type="button">
-                      Send test email
+                    <button
+                      className="primary-action"
+                      disabled={isBusy}
+                      onClick={() => void runAction("test")}
+                      type="button"
+                    >
+                      Send test to me
                     </button>
-                    <button className="secondary-action" type="button">
-                      Schedule campaign
+                    <button
+                      className="secondary-action"
+                      disabled={isBusy}
+                      onClick={() => void runAction("send")}
+                      type="button"
+                    >
+                      Send invitations
                     </button>
                   </div>
+                  {sendNotice && (
+                    <p className="send-notice" role="status">
+                      {sendNotice}
+                    </p>
+                  )}
                 </div>
               )}
             </section>
@@ -821,6 +926,9 @@ export default function Home() {
                 Export report
               </button>
             </div>
+            <p className="helper-text" role="note">
+              Example figures. These panels are not connected to live data yet.
+            </p>
             <div className="admin-metrics">
               {adminMetrics.map((metric) => (
                 <article key={metric.label}>
@@ -830,33 +938,21 @@ export default function Home() {
               ))}
             </div>
             <div className="admin-grid">
-              <section className="registration-panel" aria-label="User registration">
-                <h3>User registration</h3>
-                <div className="registration-fields">
-                  <label>
-                    <span>First name</span>
-                    <input placeholder="Ryan" />
-                  </label>
-                  <label>
-                    <span>Last name</span>
-                    <input placeholder="Bott" />
-                  </label>
-                  <label>
-                    <span>Work email</span>
-                    <input placeholder="name@example.org" type="email" />
-                  </label>
-                  <label>
-                    <span>Password</span>
-                    <input placeholder="Minimum 12 characters" type="password" />
-                  </label>
-                </div>
-                <label className="toggle-row">
-                  <input type="checkbox" defaultChecked />
-                  <span>Require superuser approval</span>
-                </label>
-                <button className="primary-action" type="button">
-                  Create account
-                </button>
+              <section className="registration-panel" aria-label="Staff access">
+                <h3>Staff access</h3>
+                <p className="helper-text">
+                  Who can reach this site is managed in Cloudflare Access, not here. That way
+                  there are no passwords stored in this application, and someone who leaves
+                  PossAbilities loses access everywhere at once.
+                </p>
+                <ol className="access-steps">
+                  <li>Open the Cloudflare dashboard, then Zero Trust, then Access, then Applications.</li>
+                  <li>Choose the invitations application.</li>
+                  <li>Edit its policy to add or remove an email address.</li>
+                </ol>
+                <p className="helper-text">
+                  Changes take effect the next time that person signs in.
+                </p>
               </section>
 
               <section className="monitor-panel" aria-label="Platform health">

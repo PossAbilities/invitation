@@ -2190,3 +2190,20 @@ textarea:focus {
 .guest-shell .invite-card-shell {
   overflow: visible;
 }
+
+.send-notice {
+  margin: 12px 0 0;
+  color: #4a3d52;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.access-steps {
+  margin: 0 0 12px;
+  padding-left: 20px;
+  display: grid;
+  gap: 6px;
+  color: #4a3d52;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}

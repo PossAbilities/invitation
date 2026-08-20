@@ -87,7 +87,7 @@ async function getSigningKeys(teamDomain: string) {
  * Returns the signed-in staff user, or null when the request carries no valid
  * Access assertion.
  */
-export async function getStaffUser(): Promise<StaffUser | null> {
+export async function verifyAccessToken(token: string | null): Promise<StaffUser | null> {
   const teamDomain = env.ACCESS_TEAM_DOMAIN;
   const audience = env.ACCESS_AUD;
 
@@ -97,8 +97,6 @@ export async function getStaffUser(): Promise<StaffUser | null> {
     return null;
   }
 
-  const requestHeaders = await headers();
-  const token = requestHeaders.get(JWT_HEADER);
   if (!token) return null;
 
   const parts = token.split(".");
@@ -141,6 +139,17 @@ export async function getStaffUser(): Promise<StaffUser | null> {
   if (!claims.email) return null;
 
   return { email: claims.email };
+}
+
+/** Reads and verifies the Access assertion on the current server request. */
+export async function getStaffUser(): Promise<StaffUser | null> {
+  const requestHeaders = await headers();
+  return verifyAccessToken(requestHeaders.get(JWT_HEADER));
+}
+
+/** True when Access is wired up at all. Used to explain misconfiguration. */
+export function isAccessConfigured() {
+  return Boolean(env.ACCESS_TEAM_DOMAIN && env.ACCESS_AUD);
 }
 
 /** Throws a 403 Response for routes that must never render for the public. */

@@ -18,3 +18,16 @@ declare namespace Cloudflare {
     ACCESS_AUD?: string;
   }
 }
+
+/**
+ * Vite replaces `import.meta.env.DEV` with a literal at build time. Declaring it
+ * here keeps `tsc --noEmit` (which does not run through Vite) in agreement.
+ */
+interface ImportMetaEnv {
+  readonly DEV: boolean;
+  readonly PROD: boolean;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
