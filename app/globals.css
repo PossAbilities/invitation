@@ -8,6 +8,12 @@
   --purple: #48065a;
   --purple-soft: #67227a;
   --pink: #ec008c;
+  /* Brand pink is only 4.25:1 on white, so it fails WCAG AA for normal-size
+     text. --pink-ink is the same hue darkened for text and for fills that
+     carry white labels; --pink-on-dark lifts it for text on the purple card.
+     Keep --pink itself for decorative fills, gradients, and swatches. */
+  --pink-ink: #c40074;
+  --pink-on-dark: #ff6ec0;
   --teal: #66cccc;
   --teal-deep: #247d82;
   --shadow: 0 20px 70px rgba(57, 26, 72, 0.13);
@@ -245,7 +251,7 @@ textarea:focus-visible {
 .section-kicker,
 .label-text {
   margin: 0;
-  color: var(--pink);
+  color: var(--pink-ink);
   font-size: 0.72rem;
   font-weight: 900;
   letter-spacing: 0.08em;
@@ -1169,8 +1175,9 @@ textarea:focus {
   border-radius: 18px;
   box-shadow: 0 34px 90px rgba(0, 0, 0, 0.34);
   padding: 13px;
-  overflow: auto;
-  scrollbar-width: thin;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   pointer-events: none;
   transform: translateY(172px) scale(0.72);
   opacity: 0;
@@ -1178,7 +1185,12 @@ textarea:focus {
 }
 
 .invite-card-shell {
-  min-height: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
   display: grid;
   align-content: start;
   gap: 16px;
@@ -1233,7 +1245,7 @@ textarea:focus {
 }
 
 .invite-card h3 {
-  color: var(--pink);
+  color: var(--pink-on-dark);
   font-size: clamp(1.45rem, 3vw, 2.08rem);
   line-height: 0.98;
   text-align: center;
@@ -1337,7 +1349,7 @@ textarea:focus {
 }
 
 .event-detail dt {
-  color: var(--pink);
+  color: var(--pink-ink);
   font-size: 0.72rem;
   font-weight: 900;
   letter-spacing: 0.08em;
@@ -1384,15 +1396,18 @@ textarea:focus {
 }
 
 .detail-links a:hover {
-  color: var(--pink);
+  color: var(--pink-ink);
   text-decoration-color: currentColor;
 }
 
 .rsvp-row {
+  flex: 0 0 auto;
   display: grid;
   justify-items: center;
-  gap: 8px;
-  padding-top: 2px;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 12px clamp(16px, 2vw, 22px) 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 .rsvp-row button {
@@ -1400,11 +1415,11 @@ textarea:focus {
   border: 0;
   border-radius: 999px;
   color: #ffffff;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--pink) 86%, #ffffff), var(--pink));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--pink-ink) 92%, #ffffff), var(--pink-ink));
   padding: 0 34px;
   font-weight: 900;
   box-shadow:
-    0 7px 0 color-mix(in srgb, var(--pink) 56%, var(--purple)),
+    0 7px 0 color-mix(in srgb, var(--pink-ink) 56%, var(--purple)),
     0 16px 30px rgba(236, 0, 140, 0.24);
   transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 180ms ease;
 }
@@ -1416,12 +1431,12 @@ textarea:focus {
 .rsvp-row button:active {
   transform: translateY(3px);
   box-shadow:
-    0 4px 0 color-mix(in srgb, var(--pink) 56%, var(--purple)),
+    0 4px 0 color-mix(in srgb, var(--pink-ink) 56%, var(--purple)),
     0 10px 20px rgba(236, 0, 140, 0.18);
 }
 
 .rsvp-row p {
-  color: #6c6170;
+  color: rgba(255, 255, 255, 0.82);
   font-size: 0.78rem;
   line-height: 1.35;
   text-align: center;
@@ -1667,6 +1682,13 @@ textarea:focus {
   text-align: right;
 }
 
+/* Mobile-only affordances for reaching the preview, which sits below the whole
+   form once the builder collapses to a single column. */
+.preview-jump,
+.preview-return {
+  display: none;
+}
+
 @media (max-width: 1260px) {
   .app-topbar {
     grid-template-columns: 1fr auto;
@@ -1761,17 +1783,16 @@ textarea:focus {
   }
 
   .primary-nav {
-    justify-content: flex-start;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .primary-nav::-webkit-scrollbar {
-    display: none;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2px;
+    border-radius: 18px;
   }
 
   .nav-item {
-    flex: 0 0 auto;
+    padding: 0 6px;
+    font-size: 0.82rem;
+    text-align: center;
   }
 
   .new-campaign-button {
@@ -1802,23 +1823,59 @@ textarea:focus {
     grid-template-columns: 1fr;
   }
 
+  .preview-jump {
+    position: sticky;
+    bottom: 14px;
+    z-index: 12;
+    display: inline-flex;
+    align-items: center;
+    justify-self: end;
+    min-height: 46px;
+    margin-right: 4px;
+    padding: 0 22px;
+    border-radius: 999px;
+    color: #ffffff;
+    background: var(--purple);
+    box-shadow: 0 12px 30px rgba(72, 6, 90, 0.34);
+    font-weight: 900;
+    text-decoration: none;
+  }
+
+  .preview-return {
+    display: inline-flex;
+    align-items: center;
+    align-self: start;
+    min-height: 38px;
+    margin-bottom: 10px;
+    padding: 0 16px;
+    border-radius: 999px;
+    color: var(--purple);
+    background: var(--surface-soft);
+    font-weight: 850;
+    font-size: 0.86rem;
+    text-decoration: none;
+  }
+
+  /* The stage is a preview, not the real card -- 720px of it pushed everything
+     else off the phone screen. */
+  .invite-stage {
+    height: clamp(520px, 74vh, 600px);
+    min-height: 520px;
+  }
+
   .builder-rail {
-    display: flex;
-    overflow-x: auto;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
     border-right: 0;
     border-bottom: 1px solid rgba(72, 6, 90, 0.08);
-    scrollbar-width: none;
-  }
-
-  .builder-rail::-webkit-scrollbar {
-    display: none;
   }
 
   .step-button {
-    flex: 0 0 auto;
     width: auto;
-    min-width: 190px;
+    min-width: 0;
+    text-align: center;
+    justify-items: center;
   }
 
   .form-grid,
@@ -1895,6 +1952,15 @@ textarea:focus {
     width: min(100% - 14px, 420px);
   }
 
+  .primary-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .step-button small {
+    display: none;
+  }
+
   .workspace {
     padding-top: 10px;
   }
@@ -1927,8 +1993,8 @@ textarea:focus {
   }
 
   .invite-stage {
-    height: 720px;
-    min-height: 720px;
+    height: clamp(480px, 70vh, 560px);
+    min-height: 480px;
   }
 
   .envelope {

@@ -669,7 +669,7 @@ export default function Home() {
               ))}
             </aside>
 
-            <section className="builder-main">
+            <section className="builder-main" id="builder-form">
               {activeStep === "design" && (
                 <div className="builder-panel">
                   <div className="panel-title split">
@@ -916,7 +916,14 @@ export default function Home() {
               )}
             </section>
 
-            <aside className="preview-dock" aria-label="Live invitation preview">
+            <a className="preview-jump" href="#invite-preview">
+              Preview card
+            </a>
+
+            <aside className="preview-dock" id="invite-preview" aria-label="Live invitation preview">
+              <a className="preview-return" href="#builder-form">
+                Back to editing
+              </a>
               <div className="preview-head">
                 <div>
                   <p className="label-text">Recipient view</p>
@@ -1298,13 +1305,14 @@ function InvitePreview({
               </div>
             </dl>
 
-            <div className="rsvp-row" aria-label="RSVP actions">
-              <button disabled={!isOpen} type="button">
-                RSVP
-              </button>
-              <p>We would love to know if you can make it.</p>
-            </div>
           </div>
+        </div>
+
+        <div className="rsvp-row" aria-label="RSVP actions">
+          <button disabled={!isOpen} type="button">
+            RSVP
+          </button>
+          <p>We would love to know if you can make it.</p>
         </div>
       </div>
       <button
