@@ -126,33 +126,6 @@ const activityItems = [
   "Big Tea Meet Up is currently sending",
 ];
 
-const months: Record<string, number> = {
-  jan: 0,
-  january: 0,
-  feb: 1,
-  february: 1,
-  mar: 2,
-  march: 2,
-  apr: 3,
-  april: 3,
-  may: 4,
-  jun: 5,
-  june: 5,
-  jul: 6,
-  july: 6,
-  aug: 7,
-  august: 7,
-  sep: 8,
-  sept: 8,
-  september: 8,
-  oct: 9,
-  october: 9,
-  nov: 10,
-  november: 10,
-  dec: 11,
-  december: 11,
-};
-
 function isEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
@@ -175,7 +148,7 @@ function parseInviteeRows(raw: string): Invitee[] {
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean)
-    .map((line) => {
+    .map((line): Invitee | null => {
       const separator = line.includes("\t") ? /\t+/ : /[,;]+/;
       const cells = line.split(separator).map(cleanCell).filter(Boolean);
       const email = cells.find(isEmail);
@@ -194,7 +167,7 @@ function parseInviteeRows(raw: string): Invitee[] {
         status: "Staged" as const,
       };
     })
-    .filter((invitee): invitee is Invitee => Boolean(invitee));
+    .filter((invitee) => invitee !== null);
 }
 
 function mergeInvitees(current: Invitee[], incoming: Invitee[]) {
@@ -232,90 +205,75 @@ function slugify(value: string) {
   );
 }
 
-function parseDateText(value: string) {
-  const named = value.match(/(\d{1,2})\s+([a-z]+)\s+(\d{4})/i);
-  if (named) {
-    const month = months[named[2].toLowerCase()];
 
-    if (month !== undefined) {
-      return {
-        day: Number(named[1]),
-        month,
-        year: Number(named[3]),
-      };
-    }
-  }
 
-  const iso = value.match(/\b(\d{4})-(\d{1,2})-(\d{1,2})\b/);
-  if (iso) {
-    return {
-      day: Number(iso[3]),
-      month: Number(iso[2]) - 1,
-      year: Number(iso[1]),
-    };
-  }
-
-  const numeric = value.match(/\b(\d{1,2})[/-](\d{1,2})[/-](\d{4})\b/);
-  if (numeric) {
-    return {
-      day: Number(numeric[1]),
-      month: Number(numeric[2]) - 1,
-      year: Number(numeric[3]),
-    };
-  }
-
-  return null;
+/** Splits an <input type="date"> value (yyyy-mm-dd) into numeric parts. */
+function splitDateValue(value: string) {
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return null;
+  return { year: Number(match[1]), month: Number(match[2]) - 1, day: Number(match[3]) };
 }
 
-function parseClockTime(value: string) {
-  const match = value.trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)?$/i);
-
-  if (!match) {
-    return null;
-  }
-
-  const meridiem = match[3]?.toLowerCase();
-  let hour = Number(match[1]);
-  const minute = Number(match[2] ?? "0");
-
-  if (meridiem === "pm" && hour < 12) {
-    hour += 12;
-  }
-
-  if (meridiem === "am" && hour === 12) {
-    hour = 0;
-  }
-
-  if (hour > 23 || minute > 59) {
-    return null;
-  }
-
+/** Splits an <input type="time"> value (hh:mm) into numeric parts. */
+function splitTimeValue(value: string) {
+  const match = value.match(/^(\d{2}):(\d{2})$/);
+  if (!match) return null;
+  const hour = Number(match[1]);
+  const minute = Number(match[2]);
+  if (hour > 23 || minute > 59) return null;
   return { hour, minute };
 }
 
-function parseEventDateTime(dateText: string, timeText: string) {
-  const date = parseDateText(dateText);
+function toEventDates(dateValue: string, startValue: string, endValue: string) {
+  const date = splitDateValue(dateValue);
+  if (!date) return null;
 
-  if (!date) {
-    return null;
-  }
-
-  const [rawStart = "", rawEnd] = timeText.split(/\s*[-–—]\s*/);
-  const endMeridiem = rawEnd?.match(/\b(am|pm)\b/i)?.[1];
-  const startText =
-    endMeridiem && !/\b(am|pm)\b/i.test(rawStart) ? `${rawStart}${endMeridiem}` : rawStart;
-  const start = parseClockTime(startText) ?? { hour: 9, minute: 0 };
-  const end = rawEnd ? parseClockTime(rawEnd) : null;
+  const start = splitTimeValue(startValue) ?? { hour: 9, minute: 0 };
   const startDate = new Date(date.year, date.month, date.day, start.hour, start.minute);
+
+  const end = splitTimeValue(endValue);
   const endDate = end
     ? new Date(date.year, date.month, date.day, end.hour, end.minute)
     : new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
 
+  // An end time earlier than the start means the event runs past midnight.
   if (endDate <= startDate) {
     endDate.setDate(endDate.getDate() + 1);
   }
 
   return { startDate, endDate };
+}
+
+const dateLabelFormat = new Intl.DateTimeFormat("en-GB", {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
+const timeLabelFormat = new Intl.DateTimeFormat("en-GB", {
+  hour: "numeric",
+  minute: "2-digit",
+  hour12: true,
+});
+
+/** "Friday 18 September 2026", or the raw value if the date is incomplete. */
+function formatEventDate(dateValue: string) {
+  const date = splitDateValue(dateValue);
+  if (!date) return dateValue;
+  return dateLabelFormat.format(new Date(date.year, date.month, date.day));
+}
+
+/** "2:00 pm to 5:30 pm". */
+function formatEventTime(startValue: string, endValue: string) {
+  const start = splitTimeValue(startValue);
+  if (!start) return "";
+
+  const label = (part: { hour: number; minute: number }) =>
+    timeLabelFormat.format(new Date(2000, 0, 1, part.hour, part.minute)).toLowerCase();
+
+  const end = splitTimeValue(endValue);
+  return end ? `${label(start)} to ${label(end)}` : label(start);
 }
 
 function formatCalendarDate(value: Date) {
@@ -348,26 +306,36 @@ function escapeCalendarText(value: string) {
 }
 
 function createCalendarHref({
+  endTime,
   eventDate,
   eventName,
-  eventTime,
   host,
   location,
   message,
+  startTime,
 }: {
+  endTime: string;
   eventDate: string;
   eventName: string;
-  eventTime: string;
   host: string;
   location: string;
   message: string;
+  startTime: string;
 }) {
-  const parsed = parseEventDateTime(eventDate, eventTime);
-  const fallbackStart = new Date(2026, 8, 18, 14, 0);
-  const fallbackEnd = new Date(2026, 8, 18, 17, 30);
-  const startDate = parsed?.startDate ?? fallbackStart;
-  const endDate = parsed?.endDate ?? fallbackEnd;
-  const description = `${message}\n\n${eventDate} at ${eventTime}\nHosted by ${host}\nLocation: ${location}`;
+  const dates = toEventDates(eventDate, startTime, endTime);
+
+  // Without a valid date there is nothing honest to export. Returning null lets
+  // the caller hide the link rather than hand the guest a wrong calendar entry,
+  // which is what the previous hardcoded fallback date did.
+  if (!dates) return null;
+
+  const { startDate, endDate } = dates;
+  const dateLabel = formatEventDate(eventDate);
+  const timeLabel = formatEventTime(startTime, endTime);
+  const description = `${message}\n\n${dateLabel} at ${timeLabel}\nHosted by ${host}\nLocation: ${location}`;
+
+  // DTSTAMP is derived from the event rather than the wall clock so that server
+  // and client render byte-identical markup.
   const ics = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
@@ -376,7 +344,7 @@ function createCalendarHref({
     "METHOD:PUBLISH",
     "BEGIN:VEVENT",
     `UID:${slugify(eventName)}@possabilities-invitations`,
-    `DTSTAMP:${formatCalendarStamp(new Date())}`,
+    `DTSTAMP:${formatCalendarStamp(startDate)}`,
     `DTSTART:${formatCalendarDate(startDate)}`,
     `DTEND:${formatCalendarDate(endDate)}`,
     `SUMMARY:${escapeCalendarText(eventName)}`,
@@ -397,8 +365,9 @@ export default function Home() {
   const [activeView, setActiveView] = useState<ViewMode>("campaigns");
   const [activeStep, setActiveStep] = useState<BuilderStep>("design");
   const [eventName, setEventName] = useState("Summer PossAbilities Social");
-  const [eventDate, setEventDate] = useState("Friday 18 September 2026");
-  const [eventTime, setEventTime] = useState("2:00 PM - 5:30 PM");
+  const [eventDate, setEventDate] = useState("2026-09-18");
+  const [startTime, setStartTime] = useState("14:00");
+  const [endTime, setEndTime] = useState("17:30");
   const [location, setLocation] = useState("The Social Lounge, Rochdale");
   const [host, setHost] = useState("PossAbilities CIC");
   const [message, setMessage] = useState(
@@ -418,6 +387,9 @@ export default function Home() {
   );
   const [importNotice, setImportNotice] = useState("2 rows ready");
 
+  const eventDateLabel = formatEventDate(eventDate);
+  const eventTimeLabel = formatEventTime(startTime, endTime);
+
   const responseSummary = useMemo(() => {
     const going = invitees.filter((guest) => guest.status === "Going").length;
     const opened = invitees.filter((guest) => guest.status === "Opened").length;
@@ -430,7 +402,7 @@ export default function Home() {
     () => [
       {
         title: eventName,
-        date: eventDate,
+        date: eventDateLabel,
         status: "Draft",
         guests: invitees.length,
         rsvps: responseSummary.going,
@@ -450,7 +422,7 @@ export default function Home() {
         rsvps: 21,
       },
     ],
-    [eventDate, eventName, invitees.length, responseSummary.going]
+    [eventDateLabel, eventName, invitees.length, responseSummary.going]
   );
   const currentView = viewCopy[activeView];
 
@@ -699,15 +671,25 @@ export default function Home() {
                       <label>
                         <span>Date</span>
                         <input
+                          type="date"
                           value={eventDate}
                           onChange={(event) => setEventDate(event.target.value)}
                         />
                       </label>
                       <label>
-                        <span>Time</span>
+                        <span>Start time</span>
                         <input
-                          value={eventTime}
-                          onChange={(event) => setEventTime(event.target.value)}
+                          type="time"
+                          value={startTime}
+                          onChange={(event) => setStartTime(event.target.value)}
+                        />
+                      </label>
+                      <label>
+                        <span>End time</span>
+                        <input
+                          type="time"
+                          value={endTime}
+                          onChange={(event) => setEndTime(event.target.value)}
                         />
                       </label>
                       <label>
@@ -875,7 +857,7 @@ export default function Home() {
                   <div className="review-grid">
                     <article>
                       <strong>{eventName}</strong>
-                      <span>{eventDate}</span>
+                      <span>{eventDateLabel}</span>
                     </article>
                     <article>
                       <strong>{invitees.length}</strong>
@@ -942,10 +924,13 @@ export default function Home() {
               <InvitePreview
                 cardHeader={cardHeader}
                 cardTitle={cardTitle}
+                endTime={endTime}
                 eventDate={eventDate}
+                eventDateLabel={eventDateLabel}
                 eventName={eventName}
-                eventTime={eventTime}
+                eventTimeLabel={eventTimeLabel}
                 host={host}
+                startTime={startTime}
                 isOpen={isOpen}
                 location={location}
                 logoSize={logoSize}
@@ -1193,9 +1178,11 @@ function GuestList({ invitees }: { invitees: Invitee[] }) {
 function InvitePreview({
   cardHeader,
   cardTitle,
+  endTime,
   eventDate,
+  eventDateLabel,
   eventName,
-  eventTime,
+  eventTimeLabel,
   host,
   isOpen,
   location,
@@ -1203,12 +1190,15 @@ function InvitePreview({
   logoVariant,
   message,
   onToggle,
+  startTime,
 }: {
   cardHeader: string;
   cardTitle: string;
+  endTime: string;
   eventDate: string;
+  eventDateLabel: string;
   eventName: string;
-  eventTime: string;
+  eventTimeLabel: string;
   host: string;
   isOpen: boolean;
   location: string;
@@ -1216,14 +1206,16 @@ function InvitePreview({
   logoVariant: LogoVariant;
   message: string;
   onToggle: () => void;
+  startTime: string;
 }) {
   const calendarHref = createCalendarHref({
+    endTime,
     eventDate,
     eventName,
-    eventTime,
     host,
     location,
     message,
+    startTime,
   });
   const mapsHref = createMapsHref(location);
   const calendarDownloadName = `${slugify(eventName)}.ics`;
@@ -1267,17 +1259,19 @@ function InvitePreview({
               <div className="event-detail">
                 <dt>Date</dt>
                 <dd>
-                  <strong>{eventDate}</strong>
-                  <span>{eventTime}</span>
-                  <span className="detail-links">
-                    <a
-                      download={calendarDownloadName}
-                      href={calendarHref}
-                      tabIndex={isOpen ? undefined : -1}
-                    >
-                      Add to calendar
-                    </a>
-                  </span>
+                  <strong>{eventDateLabel}</strong>
+                  <span>{eventTimeLabel}</span>
+                  {calendarHref && (
+                    <span className="detail-links">
+                      <a
+                        download={calendarDownloadName}
+                        href={calendarHref}
+                        tabIndex={isOpen ? undefined : -1}
+                      >
+                        Add to calendar
+                      </a>
+                    </span>
+                  )}
                 </dd>
               </div>
               <div className="event-detail">
