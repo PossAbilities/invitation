@@ -38,20 +38,24 @@ async function d1(args) {
 let worker;
 
 /**
- * The dev server occasionally recycles itself between requests (D1 writes touch
- * state it watches) and answers 503 "worker restarted mid-request". That is a
- * harness artefact, not application behaviour, so retry those -- and only
- * those -- rather than letting them masquerade as assertion failures.
+ * The dev server occasionally recycles itself between requests and answers
+ * "worker restarted mid-request" or "Network connection lost". Both are harness
+ * artefacts, not application behaviour, so retry those -- and only those --
+ * rather than letting them masquerade as assertion failures. Any other status,
+ * including a genuine 500, is returned untouched.
  */
+const TRANSIENT = /restarted mid-request|Network connection lost/i;
+
 async function fetchWorker(url, init) {
   for (let attempt = 0; ; attempt += 1) {
     const response = await worker.fetch(url, init);
-    if (response.status !== 503 || attempt >= 5) return response;
+    if (attempt >= 8 || (response.status !== 503 && response.status !== 500)) {
+      return response;
+    }
 
-    const body = await response.clone().text();
-    if (!/restarted mid-request/i.test(body)) return response;
+    if (!TRANSIENT.test(await response.clone().text())) return response;
 
-    await new Promise((resolve) => setTimeout(resolve, 250));
+    await new Promise((resolve) => setTimeout(resolve, 300));
   }
 }
 
@@ -134,7 +138,11 @@ describe("staff area", () => {
       },
     });
 
-    assert.equal(response.status, 403);
+    assert.equal(
+      response.status,
+      403,
+      `forged header should be refused, got ${response.status}: ${(await response.text()).slice(0, 200)}`,
+    );
   });
 });
 
@@ -147,7 +155,7 @@ describe("guest invitation", () => {
 
     assert.match(html, /Summer PossAbilities Social/);
     assert.match(html, /Amelia Hughes/);
-    assert.match(html, /18 September 2026/);
+    assert.match(html, /Friday 18 September 2026/);
     assert.match(html, /The Social Lounge, Rochdale/);
     assert.match(html, /Can you come\?/i);
     // Private links must not end up in search results.

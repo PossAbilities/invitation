@@ -1260,63 +1260,6 @@ textarea:focus {
   text-align: center;
 }
 
-.journey-line {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-  padding-top: 22px;
-}
-
-.journey-line::before {
-  content: "";
-  position: absolute;
-  left: 9%;
-  right: 9%;
-  top: 12px;
-  height: 12px;
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.82) 1.5px, transparent 2px);
-  background-size: 16px 10px;
-  background-repeat: repeat-x;
-}
-
-.journey-step {
-  display: grid;
-  justify-items: center;
-  gap: 6px;
-  min-width: 0;
-  text-align: center;
-}
-
-.journey-step span {
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  color: #ffffff;
-  background: color-mix(in srgb, var(--pink) 76%, var(--purple));
-  border: 3px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
-  font-size: 0.82rem;
-  font-weight: 900;
-  font-variant-numeric: tabular-nums;
-}
-
-.journey-step:nth-child(2) span,
-.journey-step:nth-child(4) span {
-  background: color-mix(in srgb, var(--teal) 78%, var(--purple));
-}
-
-.journey-step strong {
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 0.58rem;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
 .invite-detail-panel {
   display: grid;
   gap: 14px;
@@ -1925,15 +1868,6 @@ textarea:focus {
   .invite-card {
     width: min(390px, calc(100% - 18px));
     max-height: calc(100% - 34px);
-  }
-
-  .journey-line {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px 8px;
-  }
-
-  .journey-line::before {
-    display: none;
   }
 
   .guest-row {

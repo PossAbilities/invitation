@@ -18,8 +18,15 @@ function field(lines, key) {
 }
 
 describe("date and time display", () => {
+  test("is identical on every runtime, so hydration does not break", () => {
+    // Intl.DateTimeFormat renders "Friday, 18 September" on Chromium and
+    // "Friday 18 September" on workerd. The mismatch is invisible to read but
+    // it makes React discard the server-rendered markup.
+    assert.doesNotMatch(formatEventDate("2026-09-18"), /,/);
+  });
+
   test("formats a date the way a guest would read it", () => {
-    assert.match(formatEventDate("2026-09-18"), /Friday,? 18 September 2026/);
+    assert.equal(formatEventDate("2026-09-18"), "Friday 18 September 2026");
   });
 
   test("returns the raw value rather than inventing a date", () => {

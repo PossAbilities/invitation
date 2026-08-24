@@ -58,24 +58,52 @@ export function toEventDates(dateValue: string, startValue: string, endValue: st
   return { startDate, endDate };
 }
 
-const dateLabelFormat = new Intl.DateTimeFormat("en-GB", {
-  weekday: "long",
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-});
+// Formatted by hand rather than with Intl.DateTimeFormat.
+//
+// Intl's output depends on the ICU data the runtime ships: workerd renders
+// "Friday 18 September 2026" while Chromium renders "Friday, 18 September 2026".
+// That difference is invisible to read but it breaks React hydration, because
+// the server-rendered markup no longer matches what the client produces. These
+// tables give the same string everywhere.
+const WEEKDAYS = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
-const timeLabelFormat = new Intl.DateTimeFormat("en-GB", {
-  hour: "numeric",
-  minute: "2-digit",
-  hour12: true,
-});
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 /** "Friday 18 September 2026", or the raw value if the date is incomplete. */
 export function formatEventDate(dateValue: string) {
   const date = splitDateValue(dateValue);
   if (!date) return dateValue;
-  return dateLabelFormat.format(new Date(date.year, date.month, date.day));
+
+  const value = new Date(date.year, date.month, date.day);
+  return `${WEEKDAYS[value.getDay()]} ${date.day} ${MONTHS[date.month]} ${date.year}`;
+}
+
+/** "2:00 pm", in the 12-hour form the invitations use. */
+function formatClockLabel(part: { hour: number; minute: number }) {
+  const suffix = part.hour < 12 ? "am" : "pm";
+  const hour = part.hour % 12 === 0 ? 12 : part.hour % 12;
+  return `${hour}:${padDatePart(part.minute)} ${suffix}`;
 }
 
 /** "2:00 pm to 5:30 pm". */
@@ -83,11 +111,8 @@ export function formatEventTime(startValue: string, endValue: string) {
   const start = splitTimeValue(startValue);
   if (!start) return "";
 
-  const label = (part: { hour: number; minute: number }) =>
-    timeLabelFormat.format(new Date(2000, 0, 1, part.hour, part.minute)).toLowerCase();
-
   const end = splitTimeValue(endValue);
-  return end ? `${label(start)} to ${label(end)}` : label(start);
+  return end ? `${formatClockLabel(start)} to ${formatClockLabel(end)}` : formatClockLabel(start);
 }
 
 function formatCalendarDate(value: Date) {

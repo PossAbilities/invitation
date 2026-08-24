@@ -1156,7 +1156,6 @@ function InvitePreview({
   const calendarDownloadName = `${slugify(eventName)}.ics`;
   const displayHeader = cardHeader.trim();
   const displayTitle = cardTitle.trim() || eventName;
-  const journeySteps = ["Invite sent", "Card opened", "RSVP", "Live the life"];
   const logoSrc =
     logoVariant === "wordmark"
       ? "/brand/possabilities-wordmark.png"
@@ -1178,15 +1177,6 @@ function InvitePreview({
             {displayHeader && <span className="invite-tag">{displayHeader}</span>}
             <h3>{displayTitle}</h3>
             <p>{message}</p>
-          </div>
-
-          <div className="journey-line" aria-label="Invitation journey">
-            {journeySteps.map((step, index) => (
-              <div className="journey-step" key={step}>
-                <span aria-hidden="true">{index + 1}</span>
-                <strong>{step}</strong>
-              </div>
-            ))}
           </div>
 
           <div className="invite-detail-panel">
